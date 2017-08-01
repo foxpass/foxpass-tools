@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# aws-vault exec fp -- ./setup-test.py --ssh-key <key_name> --branch <test_branch> --bind-pw <bind_password> --api-key <foxpass_api_key>
+
 from __future__ import print_function
 import argparse
 import boto.ec2
@@ -31,9 +33,9 @@ def main():
 
     # Set variuables for building the instances
     key = args.ssh_key
-    sg = 'sg-23600845'
-    it = 't2.micro'
-    sub = 'subnet-4ec61216'
+    sg = 'sg-23600845'          # Old openVPN testing SG allows port 22 and 1194
+    it = 't2.micro'             # save $$$
+    sub = 'subnet-4ec61216'     # This puts it in the testing VPC in us-west-2
     branch = args.branch
     bind_pw = args.bind_pw
     api_key = args.api_key
