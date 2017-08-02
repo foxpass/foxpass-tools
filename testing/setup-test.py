@@ -3,6 +3,7 @@
 # aws-vault exec fp -- ./setup-test.py --ssh-key <key_name> --branch <test_branch> --bind-pw <bind_password> --api-key <foxpass_api_key>
 
 from __future__ import print_function
+from commands import getstatusoutput
 import argparse
 import boto.ec2
 import os
@@ -36,9 +37,11 @@ def main():
     sg = 'sg-23600845'          # Old openVPN testing SG allows port 22 and 1194
     it = 't2.micro'             # save $$$
     sub = 'subnet-4ec61216'     # This puts it in the testing VPC in us-west-2
+    # Set variables for running the setup script
     branch = args.branch
     bind_pw = args.bind_pw
     api_key = args.api_key
+    user = os.environ['USER']
     # Store the instance data here after launching
     instances = {}
 
@@ -67,32 +70,55 @@ def main():
         url = 'https://raw.githubusercontent.com/foxpass/foxpass-setup/%s/linux/%s/%s/foxpass_setup.py' % (branch,dist,ver)
         setup = 'foxpass_setup.py --base-dn dc=foxpass,dc=com --bind-user linux --bind-pw %s --api-key %s --ldap-uri ldaps://foxfood.foxpass.com --api-url https://foxfood.foxpass.com/api 2>/dev/null' % (bind_pw,api_key)
         command = 'wget %s 2>/dev/null && chmod 755 foxpass_setup.py && sudo ./%s' % (url,setup)
+        print('Configuring', name)
+        sys.stdout.flush()
 
         # Every distro is a little unique, so tweeze out those differences here
         if name == 'centos-7':
-            command = 'sudo yum install -y wget 2>/dev/null && wget %s 2>/dev/null && chmod 755 foxpass_setup.py && sudo ./%s' % (url,setup)
-            output = ssh(ip,'centos',command)
-        elif name == 'debian-8':
-            output = ssh(ip,'admin',command)
+            # Centos7 is the most annoying
+            # wget is not installed by default, so prepend that to command
+            command = 'sudo yum install -y wget 2>/dev/null &&' + command
+            ssh(ip,'centos',command)    # configure the remote host
+            ssh(ip,user,'ls',fail=True) # need to have selinux block a curl command from foxpass_ssh_keys.sh
+            # Now you can adjust selinux
+            ssh(ip,'centos',"sudo ausearch -c 'curl' --raw | audit2allow -M my-curl && sudo semodule -i my-curl.pp")
+        elif 'debian' in name:
+            ssh(ip,'admin',command)
         elif 'amzn' in name:
-            output = ssh(ip,'ec2-user',command)
+            ssh(ip,'ec2-user',command)
         elif 'ubuntu' in name:
-            output = ssh(ip,'ubuntu',command)
-
-# Run a command on the remote host
-def ssh(ip,user,command):
-    print('Running', command)
-    sys.stdout.flush()
-    print('Waiting for ssh')
-    # Try and connect, if fail, sleep a second and try again
-    while True:
-        output = os.system('ssh %s -l %s "%s" 2>&1' % (ip,user,command))
-        if output == 0:
-            break
+            ssh(ip,'ubuntu',command)
         else:
-            print('.', end='')
-            time.sleep(1)
-            pass
+            print('Do not know how to configure this distro, please update setup-test.py with parameters for', name)
+
+        # Test the setup!
+        result = re.search('root',ssh(ip,user,'sudo whoami',verbose=True,fail=True))
+        if not result:
+            print(name, 'failed, log into', ip, 'and investigate.')
+            sys.stdout.flush()
+        else:
+            print(name, 'passed!')
+            sys.stdout.flush()
+
+# Run a command on a remote host
+def ssh(ip,user,command,verbose=False,fail=False):
+    # ip = target ip address
+    # user = ssh user
+    # command = remote command to run
+    # verbose = return the results of ssh
+    # fail = if True, only try once
+
+    while True:
+        status, output = getstatusoutput('ssh %s -l %s -t "%s"' % (ip,user,command))
+        if status == 0 or fail:
+            if verbose:
+                return output
+            else:
+                break
+        print('.', end='')
+        sys.stdout.flush()
+        time.sleep(5)
+        pass
 
 if __name__ == '__main__':
     main()
