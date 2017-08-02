@@ -107,14 +107,19 @@ def ssh(ip,user,command,verbose=False,fail=False):
     # command = remote command to run
     # verbose = return the results of ssh
     # fail = if True, only try once
-
+    count = 0
     while True:
+        # Attempt to run the command, capture status and output from os command
         status, output = getstatusoutput('ssh %s -l %s -t "%s"' % (ip,user,command))
+        # If successful or we are only trying once, exit the loop
         if status == 0 or fail:
             if verbose:
                 return output
             else:
-                break
+                return
+        count += 1
+        if count > 5:
+            print('SSH failed for', name, 'after 5 attempts, investigate', ip)
         print('.', end='')
         sys.stdout.flush()
         time.sleep(5)
