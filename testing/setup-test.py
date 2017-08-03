@@ -82,7 +82,7 @@ def build_command(id, name, branch, bind_pw, api_key):
     ver = re.search('\d+.*', name).group(0)
     url = 'https://raw.githubusercontent.com/foxpass/foxpass-setup/%s/linux/%s/%s/foxpass_setup.py' % (branch, dist, ver)
     setup = ['foxpass_setup.py',
-             '--base-dn', 'dc=foxpass, dc=com',
+             '--base-dn', 'dc=foxpass,dc=com',
              '--bind-user', 'linux',
              '--bind-pw', bind_pw,
              '--api-key', api_key,
@@ -99,22 +99,25 @@ def run_command(name, ip, command):
         # Centos7 is the most annoying
         # wget is not installed by default, so prepend that to command
         command = 'sudo yum install -y wget 2>/dev/null &&' + command
-        ssh(ip,'centos', command)    # configure the remote host
-        ssh(ip, USER,'ls', fail=True) # need to have selinux block a curl command from foxpass_ssh_keys.sh
+        ssh(ip, 'centos', command)    # configure the remote host
+        ssh(ip, USER, 'ls', fail=True) # need to have selinux block a curl command from foxpass_ssh_keys.sh
         # Now you can adjust selinux
         ssh(ip, 'centos', "sudo ausearch -c 'curl' --raw | audit2allow -M my-curl && sudo semodule -i my-curl.pp")
+    elif name == 'centos-6.5':
+        command = 'sudo yum install -y wget 2>/dev/null &&' + command
+        ssh(ip, 'centos', command)
     elif 'debian' in name:
-        ssh(ip,'admin', command)
+        ssh(ip, 'admin', command)
     elif 'amzn' in name:
-        ssh(ip,'ec2-user', command)
+        ssh(ip, 'ec2-user', command)
     elif 'ubuntu' in name:
-        ssh(ip,'ubuntu', command)
+        ssh(ip, 'ubuntu', command)
     else:
         print('Do not know how to configure this distro, please update setup-test.py with parameters for', name)
 
 # Check to see if ldap logins and sudo work
 def test_result(ip, name):
-    result = re.search('root', ssh(ip, USER,'sudo whoami', verbose=True, fail=True))
+    result = re.search('root', ssh(ip, USER, 'sudo whoami', verbose=True, fail=True))
     if not result:
         print(name, 'failed, log into', ip, 'and investigate.')
         sys.stdout.flush()
@@ -141,7 +144,7 @@ def ssh(ip, user, command, verbose=False, fail=False):
                 return
         count += 1
         if count > 5:
-            print('SSH failed for', name, 'after 5 attempts, investigate', ip)
+            print('SSH failed for', ip, 'after 5 attempts, investigate')
         print('.', end='')
         sys.stdout.flush()
         time.sleep(5)
