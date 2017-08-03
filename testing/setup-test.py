@@ -13,21 +13,23 @@ import time
 
 # Globals
 AMIS = {
-    'amzn-2014.09':'ami-8786c6b7',
-    'amzn-2016.03':'ami-39798159',
-    'centos-7':'ami-f4533694',
-    'debian-8':'ami-221ea342',
-    'ubuntu-12.04':'ami-05eb1165',
-    'ubuntu-14.04':'ami-7c22b41c',
-    'ubuntu-16.04':'ami-835b4efa'
+    'amzn-2014.09': 'ami-8786c6b7',
+    'amzn-2016.03': 'ami-39798159',
+    'centos-6.5': 'ami-112cbc71'
+    'centos-7': 'ami-f4533694',
+    'debian-8': 'ami-221ea342',
+    'ubuntu-12.04': 'ami-05eb1165',
+    'ubuntu-14.04': 'ami-7c22b41c',
+    'ubuntu-16.04': 'ami-835b4efa'
 }
 SG = 'sg-23600845'          # Old openVPN testing SG allows port 22 and 1194
-IT = 't2.nano'             # save $$$
+IT = 't2.nano'              # save $$$
 SUB = 'subnet-4ec61216'     # This puts it in the testing VPC in us-west-2
+REGION_NAME = 'us-west-2'   # if you change this you must change the AMIs above
 USER = os.environ['USER']
 
 # Connect to us-west-2
-EC2 = boto.ec2.connect_to_region('us-west-2')
+EC2 = boto.ec2.connect_to_region(REGION_NAME)
 
 def main():
     parser = argparse.ArgumentParser(description='Run Foxpass setup script tests.')
@@ -46,40 +48,23 @@ def main():
     instances = {}
 
     # Launch all of the instanes and store the name and instance id in instances{}
-    for name,ami in AMIS.items():
+    for name, ami in AMIS.items():
         print('Launching', name)
-        instances[name] = EC2.run_instances(ami,instance_type=IT,subnet_id=SUB,security_group_ids=[SG],key_name=key).instances[0].id
+        instances[name] = EC2.run_instances(ami, instance_type=IT, subnet_id=SUB, security_group_ids=[SG], key_name=key).instances[0].id
 
     # Connect to each instance and run the appropriate script for Foxpass
-    for name,id in instances.items():
+    for name, id in instances.items():
         # Get instance state and wait for it to be running
-        instance_wait(id,name)
+        instance_wait(id, name)
         # Build the command to run per instance
-        command,ip = build_command(id,name,branch,bind_pw,api_key)
-
-        # Every distro is a little unique, so tweeze out those differences here
-        if name == 'centos-7':
-            # Centos7 is the most annoying
-            # wget is not installed by default, so prepend that to command
-            command = 'sudo yum install -y wget 2>/dev/null &&' + command
-            ssh(ip,'centos',command)    # configure the remote host
-            ssh(ip,USER,'ls',fail=True) # need to have selinux block a curl command from foxpass_ssh_keys.sh
-            # Now you can adjust selinux
-            ssh(ip,'centos',"sudo ausearch -c 'curl' --raw | audit2allow -M my-curl && sudo semodule -i my-curl.pp")
-        elif 'debian' in name:
-            ssh(ip,'admin',command)
-        elif 'amzn' in name:
-            ssh(ip,'ec2-user',command)
-        elif 'ubuntu' in name:
-            ssh(ip,'ubuntu',command)
-        else:
-            print('Do not know how to configure this distro, please update setup-test.py with parameters for', name)
-
+        command, ip = build_command(id, name, branch, bind_pw, api_key)
+        # Run the command on each instance
+        run_command(name, ip, command)
         # Test the setup!
-        test_result(ip,name)
+        test_result(ip, name)
 
 # Let each instance finish booting before trying to connect
-def instance_wait(id,name):
+def instance_wait(id, name):
     print('Waiting for', name, 'to launch.', end='')
     sys.stdout.flush()
     status = EC2.get_only_instances(id)[0].state
@@ -91,20 +76,45 @@ def instance_wait(id,name):
     print('', end='\n')
 
 # Create custom command based on instance data
-def build_command(id,name,branch,bind_pw,api_key):
+def build_command(id, name, branch, bind_pw, api_key):
     ip = EC2.get_only_instances(id)[0].ip_address
-    dist = re.search('^\w+',name).group(0)
-    ver = re.search('\d+.*',name).group(0)
-    url = 'https://raw.githubusercontent.com/foxpass/foxpass-setup/%s/linux/%s/%s/foxpass_setup.py' % (branch,dist,ver)
-    setup = 'foxpass_setup.py --base-dn dc=foxpass,dc=com --bind-user linux --bind-pw %s --api-key %s --ldap-uri ldaps://foxfood.foxpass.com --api-url https://foxfood.foxpass.com/api 2>/dev/null' % (bind_pw,api_key)
-    command = 'wget %s 2>/dev/null && chmod 755 foxpass_setup.py && sudo ./%s' % (url,setup)
+    dist = re.search('^\w+', name).group(0)
+    ver = re.search('\d+.*', name).group(0)
+    url = 'https://raw.githubusercontent.com/foxpass/foxpass-setup/%s/linux/%s/%s/foxpass_setup.py' % (branch, dist, ver)
+    setup = ['foxpass_setup.py',
+             '--base-dn', 'dc=foxpass, dc=com',
+             '--bind-user', 'linux',
+             '--bind-pw', bind_pw,
+             '--api-key', api_key,
+             '--ldap-uri', 'ldaps://foxfood.foxpass.com',
+             '--api-url', 'https://foxfood.foxpass.com/api', '2>/dev/null']
+    command = 'wget %s 2>/dev/null && chmod 755 foxpass_setup.py && sudo ./%s' % (url, ' '.join(setup))
     print('Configuring', name)
     sys.stdout.flush()
-    return command,ip
+    return command, ip
+
+def run_command(name, ip, command):
+    # Every distro is a little unique, so tweeze out those differences here
+    if name == 'centos-7':
+        # Centos7 is the most annoying
+        # wget is not installed by default, so prepend that to command
+        command = 'sudo yum install -y wget 2>/dev/null &&' + command
+        ssh(ip,'centos', command)    # configure the remote host
+        ssh(ip, USER,'ls', fail=True) # need to have selinux block a curl command from foxpass_ssh_keys.sh
+        # Now you can adjust selinux
+        ssh(ip, 'centos', "sudo ausearch -c 'curl' --raw | audit2allow -M my-curl && sudo semodule -i my-curl.pp")
+    elif 'debian' in name:
+        ssh(ip,'admin', command)
+    elif 'amzn' in name:
+        ssh(ip,'ec2-user', command)
+    elif 'ubuntu' in name:
+        ssh(ip,'ubuntu', command)
+    else:
+        print('Do not know how to configure this distro, please update setup-test.py with parameters for', name)
 
 # Check to see if ldap logins and sudo work
-def test_result(ip,name):
-    result = re.search('root',ssh(ip,USER,'sudo whoami',verbose=True,fail=True))
+def test_result(ip, name):
+    result = re.search('root', ssh(ip, USER,'sudo whoami', verbose=True, fail=True))
     if not result:
         print(name, 'failed, log into', ip, 'and investigate.')
         sys.stdout.flush()
@@ -113,7 +123,7 @@ def test_result(ip,name):
         sys.stdout.flush()
 
 # Run a command on a remote host
-def ssh(ip,user,command,verbose=False,fail=False):
+def ssh(ip, user, command, verbose=False, fail=False):
     # ip = target ip address
     # user = ssh user
     # command = remote command to run
@@ -122,7 +132,7 @@ def ssh(ip,user,command,verbose=False,fail=False):
     count = 0
     while True:
         # Attempt to run the command, capture status and output from os command
-        status, output = getstatusoutput('ssh %s -l %s -t "%s"' % (ip,user,command))
+        status, output = getstatusoutput('ssh %s -l %s -t "%s"' % (ip, user, command))
         # If successful or we are only trying once, exit the loop
         if status == 0 or fail:
             if verbose:
