@@ -22,9 +22,12 @@ AMIS = {
     'ubuntu-16.04':'ami-835b4efa'
 }
 SG = 'sg-23600845'          # Old openVPN testing SG allows port 22 and 1194
-IT = 't2.micro'             # save $$$
+IT = 't2.nano'             # save $$$
 SUB = 'subnet-4ec61216'     # This puts it in the testing VPC in us-west-2
 USER = os.environ['USER']
+
+# Connect to us-west-2
+EC2 = boto.ec2.connect_to_region('us-west-2')
 
 def main():
     parser = argparse.ArgumentParser(description='Run Foxpass setup script tests.')
@@ -33,9 +36,6 @@ def main():
     parser.add_argument('--bind-pw', help='Foxpass ldap bind password')
     parser.add_argument('--api-key', help='Foxpass API KEY for account connection.')
     args = parser.parse_args()
-
-    # Connect to us-west-2
-    ec2 = boto.ec2.connect_to_region('us-west-2')
 
     # Non-global vaiables for launching instances and running the config script
     key = args.ssh_key
@@ -48,14 +48,14 @@ def main():
     # Launch all of the instanes and store the name and instance id in instances{}
     for name,ami in AMIS.items():
         print('Launching', name)
-        instances[name] = ec2.run_instances(ami,instance_type=IT,subnet_id=SUB,security_group_ids=[SG],key_name=key).instances[0].id
+        instances[name] = EC2.run_instances(ami,instance_type=IT,subnet_id=SUB,security_group_ids=[SG],key_name=key).instances[0].id
 
     # Connect to each instance and run the appropriate script for Foxpass
     for name,id in instances.items():
         # Get instance state and wait for it to be running
-        instance_wait(id)
+        instance_wait(id,name)
         # Build the command to run per instance
-        command = build_command(id,name,branch,dist,ver,bind_pw,api_key)
+        command,ip = build_command(id,name,branch,bind_pw,api_key)
 
         # Every distro is a little unique, so tweeze out those differences here
         if name == 'centos-7':
@@ -79,20 +79,20 @@ def main():
         test_result(ip,name)
 
 # Let each instance finish booting before trying to connect
-def instance_wait(id):
+def instance_wait(id,name):
     print('Waiting for', name, 'to launch.', end='')
     sys.stdout.flush()
-    status = ec2.get_only_instances(id)[0].state
+    status = EC2.get_only_instances(id)[0].state
     while status != 'running':
         time.sleep(5)
-        status = ec2.get_only_instances(id)[0].state
+        status = EC2.get_only_instances(id)[0].state
         print('.', end='')
         sys.stdout.flush()
     print('', end='\n')
 
 # Create custom command based on instance data
-def build_command(id,name,branch,dist,ver,bind_pw,api_key):
-    ip = ec2.get_only_instances(id)[0].ip_address
+def build_command(id,name,branch,bind_pw,api_key):
+    ip = EC2.get_only_instances(id)[0].ip_address
     dist = re.search('^\w+',name).group(0)
     ver = re.search('\d+.*',name).group(0)
     url = 'https://raw.githubusercontent.com/foxpass/foxpass-setup/%s/linux/%s/%s/foxpass_setup.py' % (branch,dist,ver)
@@ -100,10 +100,10 @@ def build_command(id,name,branch,dist,ver,bind_pw,api_key):
     command = 'wget %s 2>/dev/null && chmod 755 foxpass_setup.py && sudo ./%s' % (url,setup)
     print('Configuring', name)
     sys.stdout.flush()
-    return command
+    return command,ip
 
 # Check to see if ldap logins and sudo work
-def test_result(ip,name)
+def test_result(ip,name):
     result = re.search('root',ssh(ip,USER,'sudo whoami',verbose=True,fail=True))
     if not result:
         print(name, 'failed, log into', ip, 'and investigate.')
