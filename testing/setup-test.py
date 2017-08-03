@@ -15,7 +15,7 @@ import time
 AMIS = {
     'amzn-2014.09': 'ami-8786c6b7',
     'amzn-2016.03': 'ami-39798159',
-    'centos-6.5': 'ami-112cbc71'
+    'centos-6.5': 'ami-112cbc71',
     'centos-7': 'ami-f4533694',
     'debian-8': 'ami-221ea342',
     'ubuntu-12.04': 'ami-05eb1165',
