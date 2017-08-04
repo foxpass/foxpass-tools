@@ -5,11 +5,12 @@
 from __future__ import print_function
 from commands import getstatusoutput
 import argparse
-import boto.ec2
 import os
 import re
 import sys
 import time
+
+import boto.ec2
 
 # Globals
 AMIS = {
