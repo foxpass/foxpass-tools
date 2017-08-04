@@ -1,7 +1,14 @@
 #!/usr/bin/env python
 
+"""
+This script requires the external libraries from requests
+pip install requests
+
+To run:
+python foxpass_list_groups.py --key <api_key>
+"""
+
 import argparse
-import json
 import requests
 
 URL = 'https://api.foxpass.com/v1/'
@@ -17,7 +24,7 @@ def main():
     output(r)
 
 def output(r):
-    data = json.loads(r.text)['data']
+    data = r.json()['data']
     for group in data:
         print group['name']
 
