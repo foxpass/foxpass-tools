@@ -5,7 +5,7 @@ This script requires the external libraries from requests
 pip install requests
 
 To run:
-python foxpass_list_users.py --key <api_key>
+python foxpass_list_users.py --api-key <api_key>
 """
 import argparse
 import requests
@@ -15,10 +15,10 @@ ENDPOINT = 'users/'
 
 def main():
     parser = argparse.ArgumentParser(description='List groups in Foxpass')
-    parser.add_argument('--key', required=True, help='Foxpass API Key')
+    parser.add_argument('--api-key', required=True, help='Foxpass API Key')
     args = parser.parse_args()
 
-    header = {'Authorization': 'Token ' + args.key}
+    header = {'Authorization': 'Token ' + args.api_key}
     r = requests.get(URL + ENDPOINT, headers=header)
     output(r)
 
