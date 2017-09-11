@@ -46,7 +46,7 @@ def main():
 
     # Run each instance test
     pool = Pool(len(AMIS))
-    tests = [(key, api_key, bind_pw, branch, name, ami) for name, ami in AMIS.items()]
+    tests = [(key, branch, bind_pw, api_key, name, ami) for name, ami in AMIS.items()]
     for run in pool.map(star_test_instance, tests):
         print(run)
 
