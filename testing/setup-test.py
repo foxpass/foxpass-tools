@@ -15,14 +15,14 @@ import boto.ec2
 
 # Globals
 AMIS = {
-    'amzn-2014.09': 'ami-8786c6b7',
-    'amzn-2016.03': 'ami-39798159',
-    'centos-6.5': 'ami-112cbc71',
-    'centos-7': 'ami-f4533694',
-    'debian-8': 'ami-221ea342',
-    'ubuntu-12.04': 'ami-05eb1165',
-    'ubuntu-14.04': 'ami-7c22b41c',
-    'ubuntu-16.04': 'ami-835b4efa'
+#'amzn-2014.09': 'ami-8786c6b7',
+#    'amzn-2016.03': 'ami-39798159',
+#    'centos-6.5': 'ami-112cbc71',
+#    'centos-7': 'ami-f4533694',
+#    'debian-8': 'ami-221ea342',
+#    'ubuntu-12.04': 'ami-05eb1165',
+    'ubuntu-14.04': 'ami-7c22b41c'
+#    'ubuntu-16.04': 'ami-835b4efa'
 }
 SG = 'sg-23600845'          # Old openVPN testing SG allows port 22 and 1194
 IT = 't2.nano'              # save $$$
@@ -30,15 +30,12 @@ SUB = 'subnet-4ec61216'     # This puts it in the testing VPC in us-west-2
 REGION_NAME = 'us-west-2'   # if you change this you must change the AMIs above
 USER = os.environ['USER']
 
-# Connect to us-west-2
-EC2 = boto.ec2.connect_to_region(REGION_NAME)
-
 def main():
     parser = argparse.ArgumentParser(description='Run Foxpass setup script tests.')
-    parser.add_argument('--ssh-key', help='SSH Key name to use when launching instance.')
-    parser.add_argument('--branch', help='Github branch name to use for testing.')
-    parser.add_argument('--bind-pw', help='Foxpass ldap bind password')
-    parser.add_argument('--api-key', help='Foxpass API KEY for account connection.')
+    parser.add_argument('--ssh-key', required=True, help='SSH Key name to use when launching instance.')
+    parser.add_argument('--branch', required=True, help='Github branch name to use for testing.')
+    parser.add_argument('--bind-pw', required=True, help='Foxpass ldap bind password')
+    parser.add_argument('--api-key', required=True, help='Foxpass API KEY for account connection.')
     args = parser.parse_args()
 
     # Non-global vaiables for launching instances and running the config script
@@ -46,51 +43,48 @@ def main():
     branch = args.branch
     bind_pw = args.bind_pw
     api_key = args.api_key
-    # Store the instance data here after launching
-    instances = {}
-
-    # Launch all of the instanes and store the name and instance id in instances{}
-    for name, ami in AMIS.items():
-        print('Launching', name)
-        instances[name] = EC2.run_instances(ami, instance_type=IT, subnet_id=SUB, security_group_ids=[SG], key_name=key).instances[0].id
 
     # Run each instance test
-    pool = Pool(len(instances))
-    tests = [(api_key, bind_pw, branch, name, ami) for name, ami in AMIS.items()]
-    #results = [pool.apply_async(test_instance, t) for t in tests]
+    pool = Pool(len(AMIS))
+    tests = [(key, api_key, bind_pw, branch, name, ami) for name, ami in AMIS.items()]
     for run in pool.map(star_test_instance, tests):
-        print(x)
+        print(run)
 
 # pool hack
 def star_test_instance(args):
     return test_instance(*args)
 
 # Connect to instance and run the appropriate script for Foxpass
-def test_instance(api_key, bind_pw, branch, name, instance_id):
+def test_instance(key, branch, bind_pw, api_key, name, ami):
+    # Connect to EC2
+    ec2 = boto.ec2.connect_to_region(REGION_NAME)
+    # Launch an instance and save the instance_id
+    print('Launching', name)
+    instance_id = ec2.run_instances(ami, instance_type=IT, subnet_id=SUB, security_group_ids=[SG], key_name=key).instances[0].id
     # Get instance state and wait for it to be running
-    instance_wait(instance_id, name)
+    instance_wait(ec2, instance_id, name)
     # Build the command to run per instance
-    command, ip = build_command(instance_id, name, branch, bind_pw, api_key)
+    command, ip = build_command(ec2, instance_id, name, branch, bind_pw, api_key)
     # Run the command on each instance
     run_command(name, ip, command)
     # Test the setup!
     test_result(ip, name)
 
 # Let each instance finish booting before trying to connect
-def instance_wait(instance_id, name):
+def instance_wait(ec2, instance_id, name):
     print('Waiting for', name, 'to launch.', end='')
     sys.stdout.flush()
-    status = EC2.get_only_instances(instance_id)[0].state
+    status = ec2.get_only_instances(instance_id)[0].state
     while status != 'running':
         time.sleep(5)
-        status = EC2.get_only_instances(instance_id)[0].state
+        status = ec2.get_only_instances(instance_id)[0].state
         print('.', end='')
         sys.stdout.flush()
     print('', end='\n')
 
 # Create custom command based on instance data
-def build_command(instance_id, name, branch, bind_pw, api_key):
-    ip = EC2.get_only_instances(instance_id)[0].ip_address
+def build_command(ec2, instance_id, name, branch, bind_pw, api_key):
+    ip = ec2.get_only_instances(instance_id)[0].ip_address
     dist = re.search('^\w+', name).group(0)
     ver = re.search('\d+.*', name).group(0)
     url = 'https://raw.githubusercontent.com/foxpass/foxpass-setup/%s/linux/%s/%s/foxpass_setup.py' % (branch, dist, ver)
@@ -158,6 +152,7 @@ def ssh(ip, user, command, verbose=False, fail=False):
         count += 1
         if count > 5:
             print('SSH failed for', ip, 'after 5 attempts, investigate')
+            return
         print('.', end='')
         sys.stdout.flush()
         time.sleep(5)
