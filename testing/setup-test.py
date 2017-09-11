@@ -4,6 +4,7 @@
 
 from __future__ import print_function
 from commands import getstatusoutput
+from multiprocessing import Pool
 import argparse
 import os
 import re
@@ -53,32 +54,43 @@ def main():
         print('Launching', name)
         instances[name] = EC2.run_instances(ami, instance_type=IT, subnet_id=SUB, security_group_ids=[SG], key_name=key).instances[0].id
 
-    # Connect to each instance and run the appropriate script for Foxpass
-    for name, id in instances.items():
-        # Get instance state and wait for it to be running
-        instance_wait(id, name)
-        # Build the command to run per instance
-        command, ip = build_command(id, name, branch, bind_pw, api_key)
-        # Run the command on each instance
-        run_command(name, ip, command)
-        # Test the setup!
-        test_result(ip, name)
+    # Run each instance test
+    pool = Pool(len(instances))
+    tests = [(api_key, bind_pw, branch, name, ami) for name, ami in AMIS.items()]
+    #results = [pool.apply_async(test_instance, t) for t in tests]
+    for run in pool.map(star_test_instance, tests):
+        print(x)
+
+# pool hack
+def star_test_instance(args):
+    return test_instance(*args)
+
+# Connect to instance and run the appropriate script for Foxpass
+def test_instance(api_key, bind_pw, branch, name, instance_id):
+    # Get instance state and wait for it to be running
+    instance_wait(instance_id, name)
+    # Build the command to run per instance
+    command, ip = build_command(instance_id, name, branch, bind_pw, api_key)
+    # Run the command on each instance
+    run_command(name, ip, command)
+    # Test the setup!
+    test_result(ip, name)
 
 # Let each instance finish booting before trying to connect
-def instance_wait(id, name):
+def instance_wait(instance_id, name):
     print('Waiting for', name, 'to launch.', end='')
     sys.stdout.flush()
-    status = EC2.get_only_instances(id)[0].state
+    status = EC2.get_only_instances(instance_id)[0].state
     while status != 'running':
         time.sleep(5)
-        status = EC2.get_only_instances(id)[0].state
+        status = EC2.get_only_instances(instance_id)[0].state
         print('.', end='')
         sys.stdout.flush()
     print('', end='\n')
 
 # Create custom command based on instance data
-def build_command(id, name, branch, bind_pw, api_key):
-    ip = EC2.get_only_instances(id)[0].ip_address
+def build_command(instance_id, name, branch, bind_pw, api_key):
+    ip = EC2.get_only_instances(instance_id)[0].ip_address
     dist = re.search('^\w+', name).group(0)
     ver = re.search('\d+.*', name).group(0)
     url = 'https://raw.githubusercontent.com/foxpass/foxpass-setup/%s/linux/%s/%s/foxpass_setup.py' % (branch, dist, ver)
