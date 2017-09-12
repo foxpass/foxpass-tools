@@ -163,9 +163,9 @@ def ssh(ip, user, command, verbose=False, once=False):
         # If successful or we are only trying once, exit the loop
         if status == 0:
             if verbose:
-                LOGGER.warning('Failed to run: %s', command)
                 return output
             else:
+                LOGGER.warning('Failed to run: %s', command)
                 return
         if once:
             if verbose:
