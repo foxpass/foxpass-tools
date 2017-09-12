@@ -15,14 +15,14 @@ import boto.ec2
 
 # Globals
 AMIS = {
-#'amzn-2014.09': 'ami-8786c6b7',
-#    'amzn-2016.03': 'ami-39798159',
-#    'centos-6.5': 'ami-112cbc71',
-#    'centos-7': 'ami-f4533694',
-#    'debian-8': 'ami-221ea342',
-#    'ubuntu-12.04': 'ami-05eb1165',
-    'ubuntu-14.04': 'ami-7c22b41c'
-#    'ubuntu-16.04': 'ami-835b4efa'
+    'amzn-2014.09': 'ami-8786c6b7',
+    'amzn-2016.03': 'ami-39798159',
+    'centos-6.5': 'ami-112cbc71',
+    'centos-7': 'ami-f4533694',
+    'debian-8': 'ami-221ea342',
+    'ubuntu-12.04': 'ami-05eb1165',
+    'ubuntu-14.04': 'ami-7c22b41c',
+    'ubuntu-16.04': 'ami-835b4efa'
 }
 SG = 'sg-23600845'          # Old openVPN testing SG allows port 22 and 1194
 IT = 't2.nano'              # save $$$
@@ -36,6 +36,7 @@ def main():
     parser.add_argument('--branch', required=True, help='Github branch name to use for testing.')
     parser.add_argument('--bind-pw', required=True, help='Foxpass ldap bind password')
     parser.add_argument('--api-key', required=True, help='Foxpass API KEY for account connection.')
+    parser.add_argument('--ami-name', default=False, help='Distro name to run as a single instance')
     args = parser.parse_args()
 
     # Non-global vaiables for launching instances and running the config script
@@ -44,13 +45,32 @@ def main():
     bind_pw = args.bind_pw
     api_key = args.api_key
 
-    # Run each instance test
-    pool = Pool(len(AMIS))
-    tests = [(key, branch, bind_pw, api_key, name, ami) for name, ami in AMIS.items()]
-    for run in pool.map(star_test_instance, tests):
-        print(run)
+    # Check to see if we are running just one ami or the whole list
+    if args.ami_name:
+        name, ami = ami_check(args.ami_name)
+        test_instance(key, branch, bind_pw, api_key, name, ami)
+    else:
+        multi_process(key, branch, bind_pw, api_key)
 
-# pool hack
+# Check ami_name
+def ami_check(name):
+    if name in AMIS.keys():
+        return name, AMIS[name]
+    else:
+        print('Do not know how to configure this distro, please update setup-test.py with parameters for', name)
+        exit()
+
+# Run all every AMI we test
+def multi_process(key, branch, bind_pw, api_key):
+    # Create a process pool large enough to run all of the instances in parallel
+    pool = Pool(len(AMIS))
+    # Build an array with all of the parameters that get called in test_instance()
+    tests = [(key, branch, bind_pw, api_key, name, ami) for name, ami in AMIS.items()]
+    # Pass the parameters for each process call into star_test_instance() to expand the arguments
+    for run in pool.map(star_test_instance, tests):
+        r = run     # Run each process
+
+# Expand the parameters passed in by pool.map() to test_instance()
 def star_test_instance(args):
     return test_instance(*args)
 
@@ -60,6 +80,7 @@ def test_instance(key, branch, bind_pw, api_key, name, ami):
     ec2 = boto.ec2.connect_to_region(REGION_NAME)
     # Launch an instance and save the instance_id
     print('Launching', name)
+    sys.stdout.flush()
     instance_id = ec2.run_instances(ami, instance_type=IT, subnet_id=SUB, security_group_ids=[SG], key_name=key).instances[0].id
     # Get instance state and wait for it to be running
     instance_wait(ec2, instance_id, name)
@@ -72,15 +93,12 @@ def test_instance(key, branch, bind_pw, api_key, name, ami):
 
 # Let each instance finish booting before trying to connect
 def instance_wait(ec2, instance_id, name):
-    print('Waiting for', name, 'to launch.', end='')
+    print('Waiting for', name, 'to boot.')
     sys.stdout.flush()
     status = ec2.get_only_instances(instance_id)[0].state
     while status != 'running':
         time.sleep(5)
         status = ec2.get_only_instances(instance_id)[0].state
-        print('.', end='')
-        sys.stdout.flush()
-    print('', end='\n')
 
 # Create custom command based on instance data
 def build_command(ec2, instance_id, name, branch, bind_pw, api_key):
@@ -152,10 +170,9 @@ def ssh(ip, user, command, verbose=False, fail=False):
         count += 1
         if count > 5:
             print('SSH failed for', ip, 'after 5 attempts, investigate')
+            sys.stdout.flush()
             return
-        print('.', end='')
-        sys.stdout.flush()
-        time.sleep(5)
+        time.sleep(10)
         pass
 
 if __name__ == '__main__':
