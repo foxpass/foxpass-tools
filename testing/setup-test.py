@@ -126,7 +126,7 @@ def run_command(name, ip, command):
         # wget is not installed by default, so prepend that to command
         command = 'sudo yum install -y wget 2>/dev/null &&' + command
         ssh(ip, 'centos', command)    # configure the remote host
-        ssh(ip, USER, 'ls', fail=True) # need to have selinux block a curl command from foxpass_ssh_keys.sh
+        ssh(ip, USER, 'ls', once=True) # need to have selinux block a curl command from foxpass_ssh_keys.sh
         # Now you can adjust selinux
         ssh(ip, 'centos', "sudo ausearch -c 'curl' --raw | audit2allow -M my-curl && sudo semodule -i my-curl.pp")
     elif name == 'centos-6.5':
