@@ -32,7 +32,7 @@ REGION_NAME = 'us-west-2'   # if you change this you must change the AMIs above
 USER = os.environ['USER']
 LOGGER = multiprocessing.log_to_stderr()
 LOGGER.setLevel(logging.INFO)
-LOGGER.warning('Starting test(s)')
+LOGGER.info('Starting test(s)')
 
 def main():
     parser = argparse.ArgumentParser(description='Run Foxpass setup script tests.')
@@ -143,33 +143,38 @@ def run_command(name, ip, command):
 
 # Check to see if ldap logins and sudo work
 def test_result(ip, name):
-    result = re.search('root', ssh(ip, USER, 'sudo whoami', verbose=True, fail=True))
+    result = re.search('root', ssh(ip, USER, 'sudo whoami', verbose=True, once=True))
     if not result:
-        LOGGER.warning('%s failed, log into %s and investigate.', name, extra=ip)
+        LOGGER.warning('%s failed, log in and investigate.', name)
     else:
         LOGGER.info('%s passed!', name)
 
 # Run a command on a remote host
-def ssh(ip, user, command, verbose=False, fail=False):
+def ssh(ip, user, command, verbose=False, once=False):
     # ip = target ip address
     # user = ssh user
     # command = remote command to run
     # verbose = return the results of ssh
-    # fail = if True, only try once
+    # once = if True, only try once
     count = 0
     while True:
         # Attempt to run the command, capture status and output from os command
         status, output = getstatusoutput('ssh %s -l %s -t "%s"' % (ip, user, command))
         # If successful or we are only trying once, exit the loop
-        if status == 0 or fail:
+        if status == 0:
             if verbose:
-                LOGGER.warning('Failed to run:\n%s', command)
+                LOGGER.warning('Failed to run: %s', command)
+                return output
+            else:
+                return
+        if once:
+            if verbose:
                 return output
             else:
                 return
         count += 1
         if count > 5:
-            LOGGER.warning('Failed to run:\n%s', command)
+            LOGGER.warning('Failed to run: %s', command)
             LOGGER.warning('SSH failed for %s after 5 attempts, investigate', ip)
             return
         time.sleep(10)
