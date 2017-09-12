@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# aws-vault exec fp -- ./setup-test.py --ssh-key <key_name> --branch <test_branch> --bind-pw <bind_password> --api-key <foxpass_api_key>
+# aws-vault exec fp -- ./setup-test.py --ssh-key <key_name> --branch <test_branch> --bind-pw <bind_password> --api-key <foxpass_api_key> [--ami-name <AMI NAME>]
 
 from commands import getstatusoutput
 from multiprocessing import Pool
