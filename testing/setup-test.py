@@ -165,8 +165,10 @@ def ssh(ip, user, command, verbose=False, once=False):
             if verbose:
                 return output
             else:
-                LOGGER.warning('Failed to run: ssh %s -l %s -t "%s"', ip, user, command)
                 return
+        else:
+            LOGGER.warning('Failed to run: ssh %s -l %s -t "%s"', ip, user, command)
+            return
         if once:
             if verbose:
                 return output
