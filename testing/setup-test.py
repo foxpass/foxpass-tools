@@ -2,10 +2,11 @@
 
 # aws-vault exec fp -- ./setup-test.py --ssh-key <key_name> --branch <test_branch> --bind-pw <bind_password> --api-key <foxpass_api_key>
 
-from __future__ import print_function
 from commands import getstatusoutput
 from multiprocessing import Pool
 import argparse
+import logging
+import multiprocessing
 import os
 import re
 import sys
@@ -29,6 +30,9 @@ IT = 't2.nano'              # save $$$
 SUB = 'subnet-4ec61216'     # This puts it in the testing VPC in us-west-2
 REGION_NAME = 'us-west-2'   # if you change this you must change the AMIs above
 USER = os.environ['USER']
+LOGGER = multiprocessing.log_to_stderr()
+LOGGER.setLevel(logging.INFO)
+LOGGER.warning('Starting test(s)')
 
 def main():
     parser = argparse.ArgumentParser(description='Run Foxpass setup script tests.')
@@ -57,7 +61,7 @@ def ami_check(name):
     if name in AMIS.keys():
         return name, AMIS[name]
     else:
-        print('Do not know how to configure this distro, please update setup-test.py with parameters for', name)
+        LOGGER.warning('Do not know how to configure this distro, please update setup-test.py with parameters for %s.', name)
         exit()
 
 # Run all every AMI we test
@@ -79,8 +83,7 @@ def test_instance(key, branch, bind_pw, api_key, name, ami):
     # Connect to EC2
     ec2 = boto.ec2.connect_to_region(REGION_NAME)
     # Launch an instance and save the instance_id
-    print('Launching', name)
-    sys.stdout.flush()
+    LOGGER.info('Launching %s.', name)
     instance_id = ec2.run_instances(ami, instance_type=IT, subnet_id=SUB, security_group_ids=[SG], key_name=key).instances[0].id
     # Get instance state and wait for it to be running
     instance_wait(ec2, instance_id, name)
@@ -93,8 +96,7 @@ def test_instance(key, branch, bind_pw, api_key, name, ami):
 
 # Let each instance finish booting before trying to connect
 def instance_wait(ec2, instance_id, name):
-    print('Waiting for', name, 'to boot.')
-    sys.stdout.flush()
+    LOGGER.info('Waiting for %s to boot.', name)
     status = ec2.get_only_instances(instance_id)[0].state
     while status != 'running':
         time.sleep(5)
@@ -114,8 +116,7 @@ def build_command(ec2, instance_id, name, branch, bind_pw, api_key):
              '--ldap-uri', 'ldaps://foxfood.foxpass.com',
              '--api-url', 'https://foxfood.foxpass.com/api', '2>/dev/null']
     command = 'wget %s 2>/dev/null && chmod 755 foxpass_setup.py && sudo ./%s' % (url, ' '.join(setup))
-    print('Configuring', name)
-    sys.stdout.flush()
+    LOGGER.info('Configuring %s.', name)
     return command, ip
 
 def run_command(name, ip, command):
@@ -138,17 +139,15 @@ def run_command(name, ip, command):
     elif 'ubuntu' in name:
         ssh(ip, 'ubuntu', command)
     else:
-        print('Do not know how to configure this distro, please update setup-test.py with parameters for', name)
+        LOGGER.warning('Do not know how to configure this distro, please update setup-test.py with parameters for %s.', name)
 
 # Check to see if ldap logins and sudo work
 def test_result(ip, name):
     result = re.search('root', ssh(ip, USER, 'sudo whoami', verbose=True, fail=True))
     if not result:
-        print(name, 'failed, log into', ip, 'and investigate.')
-        sys.stdout.flush()
+        LOGGER.warning('%s failed, log into %s and investigate.', name, extra=ip)
     else:
-        print(name, 'passed!')
-        sys.stdout.flush()
+        LOGGER.info('%s passed!', name)
 
 # Run a command on a remote host
 def ssh(ip, user, command, verbose=False, fail=False):
@@ -164,13 +163,14 @@ def ssh(ip, user, command, verbose=False, fail=False):
         # If successful or we are only trying once, exit the loop
         if status == 0 or fail:
             if verbose:
+                LOGGER.warning('Failed to run:\n%s', command)
                 return output
             else:
                 return
         count += 1
         if count > 5:
-            print('SSH failed for', ip, 'after 5 attempts, investigate')
-            sys.stdout.flush()
+            LOGGER.warning('Failed to run:\n%s', command)
+            LOGGER.warning('SSH failed for %s after 5 attempts, investigate', ip)
             return
         time.sleep(10)
         pass
