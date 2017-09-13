@@ -175,7 +175,6 @@ def ssh(ip, user, command, verbose=False, once=False):
                 return
         count += 1
         if count > 5:
-            LOGGER.warning('Failed to run: %s', command)
             LOGGER.warning('SSH failed for %s after 5 attempts, investigate', ip)
             return
         time.sleep(10)
