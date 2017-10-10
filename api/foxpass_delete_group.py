@@ -15,7 +15,7 @@ URL = 'https://api.foxpass.com/v1/'
 ENDPOINT = 'groups/'
 
 def main():
-    parser = argparse.ArgumentParser(description='List groups in Foxpass')
+    parser = argparse.ArgumentParser(description='Delete groups in Foxpass')
     parser.add_argument('--api-key', required=True, help='Foxpass API Key')
     parser.add_argument('--group-name', required=True, help='Foxpass group name')
     args = parser.parse_args()

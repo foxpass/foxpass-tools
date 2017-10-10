@@ -16,7 +16,7 @@ ENDPOINT = 'users/'
 DATA = {'is_active': False}
 
 def main():
-    parser = argparse.ArgumentParser(description='List groups in Foxpass')
+    parser = argparse.ArgumentParser(description='Deactivate user in Foxpass')
     parser.add_argument('--api-key', required=True, help='Foxpass API Key')
     parser.add_argument('--user', required=True, help='Foxpass username')
     args = parser.parse_args()
