@@ -13,6 +13,7 @@ import requests
 
 URL = 'https://api.foxpass.com/v1/'
 ENDPOINT = 'users/'
+DATA = {'is_posix_user': True}
 
 def main():
     parser = argparse.ArgumentParser(description='Sets user as Posix in Foxpass')
