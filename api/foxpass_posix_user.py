@@ -5,27 +5,24 @@ This script requires the external libraries from requests
 pip install requests
 
 To run:
-python foxpass_list_users.py --api-key <api_key>
+python foxpass_make_posix_user.py --api-key <api_key> --user <username>
 """
 import argparse
+import json
 import requests
 
 URL = 'https://api.foxpass.com/v1/'
 ENDPOINT = 'users/'
 
 def main():
-    parser = argparse.ArgumentParser(description='List users in Foxpass')
+    parser = argparse.ArgumentParser(description='Sets user as Posix in Foxpass')
     parser.add_argument('--api-key', required=True, help='Foxpass API Key')
+    parser.add_argument('--user', required=True, help='Foxpass username')
     args = parser.parse_args()
 
     header = {'Authorization': 'Token ' + args.api_key}
-    r = requests.get(URL + ENDPOINT, headers=header)
-    output(r)
-
-def output(r):
-    data = r.json()['data']
-    for group in data:
-        print group['username']
+    r = requests.put(URL + ENDPOINT + args.user + '/', headers=header, data=json.dumps(DATA))
+    print r.json()
 
 if __name__ == '__main__':
     main()
