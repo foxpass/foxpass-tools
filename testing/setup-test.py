@@ -25,7 +25,7 @@ AMIS = {
     'ubuntu-14.04': 'ami-7c22b41c',
     'ubuntu-16.04': 'ami-835b4efa'
 }
-SG = 'sg-23600845'          # Old openVPN testing SG allows port 22 and 1194
+SG = 'sg-7e705d03'          # Foxpass testing SG allows 22/80/443/636 TCP and 1812 UDP
 IT = 't2.nano'              # save $$$
 SUB = 'subnet-4ec61216'     # This puts it in the testing VPC in us-west-2
 REGION_NAME = 'us-west-2'   # if you change this you must change the AMIs above
