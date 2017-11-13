@@ -46,6 +46,7 @@ def main():
     push = json.loads('[' + re.sub('\r\n', ',', push)[:-1] + ']')
     print json.dumps(push[-1]['aux'])
 
+# User variables
 def inputs():
     parser = argparse.ArgumentParser(description='Pull foxpass image from Docker Hub and push to ECR')
     parser.add_argument('--image-name', default='foxpass/foxpass:latest', help='Docker image to pull')
@@ -53,6 +54,7 @@ def inputs():
     args = parser.parse_args()
     return args
 
+# Get the latest version of Foxpass from DockerHub
 def pull_foxpass(image_name):
     try:
         client = docker.from_env()
@@ -61,6 +63,7 @@ def pull_foxpass(image_name):
         raise
     return (client, image)
 
+# Push the ECR tagged latest image of Foxpass and push it to ECR
 def ecr_push(client, image, repository):
     target = ecr_tag(image, repository)
     registry, password, username = ecr_login()
@@ -68,16 +71,23 @@ def ecr_push(client, image, repository):
     push = client.images.push(target + ':latest')
     return push
 
+# Tag the latest pull of Foxpass with the ECR URI
 def ecr_tag(image, repository):
-    target_name = get_ecr_repo(repository)
-    tag = image.tag(target_name)
+    try:
+        target_name = get_ecr_repo(repository)
+        tag = image.tag(target_name)
+    except:
+        raise
     return target_name
 
+# Get the repo URI for ECR
+# IE: 123456789012.dkr.ecr.us-west-2.amazonaws.com/foxpass
 def get_ecr_repo(repository):
     for repo in ECR.describe_repositories()['repositories']:
         if repo['repositoryName'] == repository:
             return repo['repositoryUri']
 
+# Get the docker login for ECR
 def ecr_login():
     try:
         token = ECR.get_authorization_token()['authorizationData'][0]
