@@ -5,7 +5,7 @@ This script requires the external libraries from requests
 pip install requests
 
 To run:
-python foxpass_sync_groups.py --api-key <api_key> --source-group <group_name> --dest-group <group_name>
+python foxpass_copy_group.py --api-key <api_key> --source-group <group_name> --dest-group <group_name>
 """
 import argparse
 import json
@@ -28,6 +28,7 @@ def main():
         for user_name in update_list:
             put_group_member(header, args.dest_group, user_name)
 
+# return the command line arguments
 def get_args():
     parser = argparse.ArgumentParser(description='List users in Foxpass')
     parser.add_argument('--api-key', required=True, help='Foxpass API Key')
@@ -35,6 +36,7 @@ def get_args():
     parser.add_argument('--dest-group', required=True, help='Destination group name')
     return parser.parse_args()
 
+# return a list of users in a given group
 def get_group_list(header, group_name):
     try:
         r = requests.get(API + group_name + '/members/', headers=header)
@@ -43,11 +45,13 @@ def get_group_list(header, group_name):
         sys.exit(err)
     return r
 
+# return list of usernames that are in source_list but not dest_list
 def compare_list(source_list, dest_list):
     src_users = [user['username'] for user in source_list]
     dest_users = [user['username'] for user in dest_list]
-    return [user for user in src_users if user not in dest_users]
+    return set(src_users) - set(dest_users)
 
+# add a foxpass user to a foxpass group
 def put_group_member(header, group_name, user_name):
     data = json.dumps({'username': user_name})
     try:
