@@ -10,6 +10,7 @@ python foxpass_sync_groups.py --api-key <api_key> --source-group <group_name> --
 import argparse
 import json
 import requests
+import sys
 
 URL = 'https://api.foxpass.com/v1/'
 ENDPOINT = 'groups/'
@@ -35,7 +36,11 @@ def get_args():
     return parser.parse_args()
 
 def get_group_list(header, group_name):
-    r = requests.get(API + group_name + '/members/', headers=header)
+    try:
+        r = requests.get(API + group_name + '/members/', headers=header)
+        r.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+        sys.exit(err)
     return r
 
 def compare_list(source_list, dest_list):
@@ -45,11 +50,12 @@ def compare_list(source_list, dest_list):
 
 def put_group_member(header, group_name, user_name):
     data = json.dumps({'username': user_name})
-    r = requests.post(API + group_name + '/members/', headers=header, data=data)
-    if r.status_code == 200:
-        print('{} added to {}'.format(user_name, group_name))
-    else:
-        print('{} failed to add to {}'.format(user_name, group_name))
+    try:
+        r = requests.post(API + group_name + '/members/', headers=header, data=data)
+        r.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+        print('{} failed to add to {}\n{}'.format(user_name, group_name, err))
+    print('{} added to {}'.format(user_name, group_name))
 
 if __name__ == '__main__':
     main()
