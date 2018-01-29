@@ -21,8 +21,8 @@ def main():
     source_list = get_group_list(header, args.source_group).json()['data']
     dest_list = get_group_list(header, args.dest_group).json()['data']
     update_list = compare_list(source_list, dest_list)
-    if len(dest_list) < 1:
-        print "No users to update"
+    if len(update_list) < 1:
+        print("No users to update")
     else:
         for user_name in update_list:
             put_group_member(header, args.dest_group, user_name)
@@ -47,9 +47,9 @@ def put_group_member(header, group_name, user_name):
     data = json.dumps({'username': user_name})
     r = requests.post(API + group_name + '/members/', headers=header, data=data)
     if r.status_code == 200:
-        print '%s added to %s' % (user_name, group_name)
+        print('{} added to {}'.format(user_name, group_name))
     else:
-        print '%s failed to add to %s' % (user_name, group_name)
+        print('{} failed to add to {}'.format(user_name, group_name))
 
 if __name__ == '__main__':
     main()
