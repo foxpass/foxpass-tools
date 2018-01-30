@@ -24,9 +24,9 @@ def main():
     update_list = compare_list(source_list, dest_list)
     if len(update_list) < 1:
         print("No users to update")
-    else:
-        for user_name in update_list:
-            put_group_member(header, args.dest_group, user_name)
+        return
+    for user_name in update_list:
+        put_group_member(header, args.dest_group, user_name)
 
 # return the command line arguments
 def get_args():
