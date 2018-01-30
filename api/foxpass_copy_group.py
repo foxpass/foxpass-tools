@@ -22,9 +22,10 @@ def main():
     source_list = get_group_list(header, args.source_group).json()['data']
     dest_list = get_group_list(header, args.dest_group).json()['data']
     update_list = compare_list(source_list, dest_list)
-    if len(update_list) < 1:
+    if not update_list:
         print("No users to update")
         return
+        
     for user_name in update_list:
         put_group_member(header, args.dest_group, user_name)
 
