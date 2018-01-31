@@ -7,11 +7,11 @@ ACTIONS=$(find . | xargs | sed 's/\.\/foxpass_//gi' | sed 's/\.py//gi' | sed 's/
 if [ $ARGS_NR -lt 1 ]; then
   >&2 echo "ERROR: Invalid number of arguments."
   >&2 echo "  Usage:"
-  >&2 echo "    docker run foxpass <action> [<options>]" 
+  >&2 echo "    docker run foxpass-api <action> [<options>]" 
   >&2 echo "  Actions: $ACTIONS"
   >&2 echo "  Examples:"
-  >&2 echo "    docker run foxpass copy_group [<options>]" 
-  >&2 echo "    docker run foxpass deactivate_user [<options>]" 
+  >&2 echo "    docker run foxpass-api copy_group [<options>]" 
+  >&2 echo "    docker run foxpass-api deactivate_user [<options>]" 
 
   exit 1
 fi

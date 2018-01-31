@@ -25,9 +25,9 @@ docker run foxpass-api
 
 # Help example:
 #  Usage:
-#    docker run foxpass <action> [<options>]
+#    docker run foxpass-api <action> [<options>]
 #  Actions: list_groups list_users copy_group posix_user delete_group deactivate_user
 #  Examples:
-#    docker run foxpass copy_group [<options>]
-#    docker run foxpass deactivate_user [<options>]
+#    docker run foxpass-api copy_group [<options>]
+#    docker run foxpass-api deactivate_user [<options>]
 ```
