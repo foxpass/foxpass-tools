@@ -78,6 +78,18 @@ def main():
     update_security_group(add_ports, clear_ports, rules, security_group, task_name)
 
 
+# In Lambda run this instead of main()
+def lambda_handler(event, context):
+    ec2 = boto3.resource('ec2')
+    ecs = boto3.client('ecs')
+    cluster, sg_id, task_name = ('', '', '')  # set these values for lambda here
+    security_group = ec2.SecurityGroup(sg_id)
+    active_ports = get_ports(cluster, ecs, task_name)
+    rules = get_current_sg_rules(security_group, task_name)
+    add_ports, clear_ports = ports_to_change(active_ports, rules)
+    update_security_group(add_ports, clear_ports, rules, security_group, task_name)
+
+
 # Return variable from command line
 def get_args():
     parser = argparse.ArgumentParser(description='Update SecurityGroup for ephemeral docker ports')
