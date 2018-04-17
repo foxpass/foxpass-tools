@@ -67,10 +67,10 @@ import boto3
 
 
 def main():
-    ec2 = boto3.resource('ec2')
-    ecs = boto3.client('ecs')
     args = get_args()
-    cluster, sg_id, task_name = (args.cluster, args.security_group, args.task_name)
+    cluster, region, sg_id, task_name = (args.cluster, args.region, args.security_group, args.task_name)
+    ec2 = boto3.resource('ec2', region_name=region)
+    ecs = boto3.client('ecs', region_name=region)
     security_group = ec2.SecurityGroup(sg_id)
     active_ports = get_ports(cluster, ecs, task_name)
     rules = get_current_sg_rules(security_group, task_name)
@@ -94,6 +94,7 @@ def lambda_handler(event, context):
 def get_args():
     parser = argparse.ArgumentParser(description='Update SecurityGroup for ephemeral docker ports')
     parser.add_argument('--cluster', required=True, help='ECS cluster name')
+    parser.add_argument('--region', required=True, help='Set AWS Region')
     parser.add_argument('--security-group', required=True, help='SecurityGroup id')
     parser.add_argument('--task-name', required=True, help='ECS task name to update')
     return parser.parse_args()
