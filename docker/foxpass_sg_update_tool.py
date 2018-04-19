@@ -59,7 +59,7 @@ AWS role permissions required:
 }
 
 To run:
-./foxpass_sg_update_tool.py --cluster <cluster-name> --security-group <sg-12345678> --task-name <task>
+./foxpass_sg_update_tool.py --cluster <cluster-name> --security-group <sg-12345678> --task-name <ServiceName>
 """
 
 import argparse
