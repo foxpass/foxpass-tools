@@ -98,14 +98,12 @@ def assume_role(assume):
 def get_AWS(args):
     if args.assume and args.region:
         credentials = assume_role(args.assume)
-        ecs = boto3.client('ecs', aws_access_key_id=credentials['AccessKeyId'],
-                           aws_secret_access_key=credentials['SecretAccessKey'],
-                           aws_session_token=credentials['SessionToken'],
-                           region_name=args.region)
-        ec2 = boto3.resource('ec2', aws_access_key_id=credentials['AccessKeyId'],
-                             aws_secret_access_key=credentials['SecretAccessKey'],
-                             aws_session_token=credentials['SessionToken'],
-                             region_name=args.region)
+        assume = {'aws_access_key_id': credentials['AccessKeyId'],
+                  'aws_secret_access_key': credentials['SecretAccessKey'],
+                  'aws_session_token': credentials['SessionToken'],
+                  'region_name': args.region}
+        ecs = boto3.client('ecs', **assume)
+        ec2 = boto3.resource('ec2', **assume)
     elif args.assume and not args.region:
         raise Exception('If assuming a role, you must set the region')
     elif args.region and not args.assume:
