@@ -38,28 +38,24 @@ AWS role permissions required:
             "Action": [
                 "ec2:RevokeSecurityGroupIngress",
                 "ec2:AuthorizeSecurityGroupIngress",
+                "ecs:ListTaskDefinitionFamilies",
                 "ecs:ListTasks",
+                "ec2:DescribeSecurityGroups",
                 "ec2:UpdateSecurityGroupRuleDescriptionsIngress"
             ],
-            "Resource": [
-                "arn:aws:ec2:*:*:security-group/*",
-                "arn:aws:ecs:*:*:container-instance/*"
-            ]
+            "Resource": "*"
         },
         {
             "Sid": "VisualEditor1",
             "Effect": "Allow",
-            "Action": [
-                "ecs:ListTaskDefinitionFamilies",
-                "ec2:DescribeSecurityGroups"
-            ],
-            "Resource": "*"
+            "Action": "ecs:DescribeTasks",
+            "Resource": "arn:aws:ecs:*:*:task/*"
         }
     ]
 }
 
 To run:
-./foxpass_sg_update_tool.py --cluster <cluster-name> --security-group <sg-12345678> --task-name <task>
+./foxpass_sg_update_tool.py --assume <account:role> --cluster <cluster-name> --region <AWS_REGION> --security-group <sg-12345678> --task-name <task>
 """
 
 import argparse
@@ -67,10 +63,9 @@ import boto3
 
 
 def main():
-    ec2 = boto3.resource('ec2')
-    ecs = boto3.client('ecs')
     args = get_args()
     cluster, sg_id, task_name = (args.cluster, args.security_group, args.task_name)
+    ec2, ecs = get_AWS(args)
     security_group = ec2.SecurityGroup(sg_id)
     active_ports = get_ports(cluster, ecs, task_name)
     rules = get_current_sg_rules(security_group, task_name)
@@ -81,10 +76,45 @@ def main():
 # Return variable from command line
 def get_args():
     parser = argparse.ArgumentParser(description='Update SecurityGroup for ephemeral docker ports')
+    parser.add_argument('--assume', help='AWS Account and Role ie: 999999999999:update_sg')
     parser.add_argument('--cluster', required=True, help='ECS cluster name')
+    parser.add_argument('--region', help='AWS Region ECS cluster is in')
     parser.add_argument('--security-group', required=True, help='SecurityGroup id')
     parser.add_argument('--task-name', required=True, help='ECS task name to update')
     return parser.parse_args()
+
+
+# Assume role and return credentials data
+def assume_role(assume):
+    sts_client = boto3.client('sts')
+    account, role = tuple(assume.split(':'))
+    assumedRoleObject = sts_client.assume_role(RoleArn='arn:aws:iam::%s:role/%s' % (account, role),
+                                               RoleSessionName='AssumeRoleSession1')
+    credentials = assumedRoleObject['Credentials']
+    return credentials
+
+
+# Set AWS API resrouces
+def get_AWS(args):
+    if args.assume and args.region:
+        credentials = assume_role(args.assume)
+        ecs = boto3.client('ecs', aws_access_key_id=credentials['AccessKeyId'],
+                           aws_secret_access_key=credentials['SecretAccessKey'],
+                           aws_session_token=credentials['SessionToken'],
+                           region_name=args.region)
+        ec2 = boto3.resource('ec2', aws_access_key_id=credentials['AccessKeyId'],
+                             aws_secret_access_key=credentials['SecretAccessKey'],
+                             aws_session_token=credentials['SessionToken'],
+                             region_name=args.region)
+    elif args.assume and not args.region:
+        raise Exception('If assuming a role, you must set the region')
+    elif args.region and not args.assume:
+        ec2 = boto3.resource('ec2', region_name=args.region)
+        ecs = boto3.client('ecs', region_name=args.region)
+    else:
+        ec2 = boto3.resource('ec2')
+        ecs = boto3.client('ecs')
+    return (ec2, ecs)
 
 
 # Return list of exposed ports created by ECS for task_name
