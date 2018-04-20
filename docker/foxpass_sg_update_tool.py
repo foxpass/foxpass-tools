@@ -87,7 +87,7 @@ def get_args():
 # Assume role and return credentials data
 def assume_role(assume):
     sts_client = boto3.client('sts')
-    account, role = tuple(assume.split(':'))
+    account, role = assume.split(':')
     assumedRoleObject = sts_client.assume_role(RoleArn='arn:aws:iam::%s:role/%s' % (account, role),
                                                RoleSessionName='AssumeRoleSession1')
     credentials = assumedRoleObject['Credentials']
