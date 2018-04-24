@@ -99,7 +99,6 @@ def lambda_handler(event, context):
 def get_args():
     parser = argparse.ArgumentParser(description='Update SecurityGroup for ephemeral docker ports')
     parser.add_argument('--cluster', required=True, help='ECS cluster name')
-    parser.add_argument('--region', required=True, help='Set AWS Region')
     parser.add_argument('--security-group', required=True, help='SecurityGroup id')
     parser.add_argument('--task-name', required=True, help='ECS task name to update')
     return parser.parse_args()
