@@ -70,7 +70,7 @@ import os
 
 def main():
     args = get_args()
-    cluster, region, sg_id, task_name = (args.cluster, args.region, args.security_group, args.task_name)
+    cluster, sg_id, task_name = (args.cluster, args.security_group, args.task_name)
     ec2 = boto3.resource('ec2', region_name=region)
     ecs = boto3.client('ecs', region_name=region)
     security_group = ec2.SecurityGroup(sg_id)
