@@ -60,6 +60,8 @@ To run:
 
 import argparse
 import boto3
+import logging
+import os
 
 
 def main():
@@ -71,6 +73,23 @@ def main():
     rules = get_current_sg_rules(security_group, task_name)
     add_ports, clear_ports = ports_to_change(active_ports, rules)
     update_security_group(add_ports, clear_ports, rules, security_group, task_name)
+
+
+# In Lambda run this instead of main()
+def lambda_handler(event, context):
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+    ec2 = boto3.resource('ec2')
+    ecs = boto3.client('ecs')
+    cluster = os.environ.get('CLUSTER')
+    sg_id = os.environ.get('SG_ID')
+    task_name = os.environ.get('TASK_NAME')
+    security_group = ec2.SecurityGroup(sg_id)
+    active_ports = get_ports(cluster, ecs, task_name)
+    rules = get_current_sg_rules(security_group, task_name)
+    add_ports, clear_ports = ports_to_change(active_ports, rules)
+    update_security_group(add_ports, clear_ports, rules, security_group, task_name)
+    logger.info('Active: {}\tAdded: {}\tCleared: {}'.format(active_ports, add_ports, clear_ports))
 
 
 # Return variable from command line
