@@ -156,7 +156,7 @@ def get_current_sg_rules(security_group, task_name):
     rules = [rule for rule in security_group.ip_permissions
              for dest in rule['IpRanges']
              if 'Description' in dest.keys()
-             if task_name in dest['Description']]
+             if task_name == dest['Description']]
     return rules
 
 
