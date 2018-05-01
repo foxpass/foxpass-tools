@@ -165,8 +165,8 @@ def get_current_sg_rules(security_group, task_name):
 # add_ports - a list of ports that are used by ECS that need to be added
 def ports_to_change(active_ports, rules):
     sg_ports = [rule['FromPort'] for rule in rules]
-    clear_ports = [port for port in sg_ports if port not in active_ports]
-    add_ports = [port for port in active_ports if port not in sg_ports]
+    clear_ports = list(set([port for port in sg_ports if port not in active_ports]))
+    add_ports = list(set([port for port in active_ports if port not in sg_ports]))
     return add_ports, clear_ports
 
 
