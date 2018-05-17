@@ -13,13 +13,13 @@ import argparse
 import requests
 
 URL = 'https://api.foxpass.com/v1/'
-ENDPOINT = 'username/'
+ENDPOINT = 'users/'
 
 
 def main():
     parser = argparse.ArgumentParser(description='Delete groups in Foxpass')
     parser.add_argument('--api-key', required=True, help='Foxpass API Key')
-    parser.add_argument('--group-name', required=True, help='Foxpass group name')
+    parser.add_argument('--user', required=True, help='Foxpass group name')
     args = parser.parse_args()
     header = {'Authorization': 'Token ' + args.api_key}
     r = requests.delete(URL + ENDPOINT + args.user + '/', headers=header)
