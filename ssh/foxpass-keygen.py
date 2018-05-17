@@ -29,55 +29,46 @@ import datetime
 import getpass
 import json
 import os
-import requests
 import subprocess
 
+import requests
+
 DEFAULT_BASE_URL = 'https://api.foxpass.com'
+
 
 def main():
     parser = argparse.ArgumentParser(description='Create a local keypair and upload public key to Foxpass.')
     parser.add_argument('--api-url', default=DEFAULT_BASE_URL,
                         help='Foxpass API url')
-
     args = parser.parse_args()
-
     api_base = args.api_url
-
     email = raw_input("Email address: ")
     password = getpass.getpass()
-
     # make sure the password is right
     keys = api_call(api_base, email, password, '/v1/my/sshkeys/')
-
     filename = create_ssh_key(email)
-
     add_key_to_foxpass(api_base, email, password, filename)
-
     print ""
     print "Don't forget to run ssh-add now. The -K adds the key to your keychain so it is loaded on boot:"
     print ""
     print "ssh-add -K %s" % (filename)
     print ""
 
+
 def add_key_to_foxpass(api_base, email, password, filename):
     url = '%s/v1/my/sshkeys/' % (api_base,)
-
     key_name = os.path.basename(filename)
-
     # post public portion
     pub_filename = '%s.pub' % (filename)
     with open(pub_filename, 'r') as key_file:
         key_content = key_file.read().strip()
-
     key_info = {'name': key_name,
                 'key': key_content}
-
     api_call(api_base, email, password, '/v1/my/sshkeys/', post_data=key_info)
 
 
 def create_ssh_key(email):
     home = os.environ.get('HOME')
-
     while True:
         date_str = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
         filename = "%s/.ssh/foxpass-ssh-%s" % (home, date_str)
@@ -90,19 +81,18 @@ def create_ssh_key(email):
         except:
             pass
 
+
 def api_call(api_base, email, password, url, post_data=None):
     final_url = api_base + url
-
     if post_data:
         r = requests.post(final_url, data=json.dumps(post_data), auth=(email, password))
     else:
         r = requests.get(final_url, auth=(email, password))
     resp_data = r.json()
-
     if 'status' in resp_data and resp_data['status'] == 'error':
         raise Exception(resp_data['message'])
-
     return resp_data
+
 
 if __name__ == '__main__':
     main()

@@ -32,12 +32,14 @@
 
 import argparse
 import base64
-import boto3
-import docker
 import json
 import re
 
+import boto3
+import docker
+
 ECR = boto3.client('ecr')
+
 
 def main():
     args = inputs()
@@ -45,6 +47,7 @@ def main():
     push = ecr_push(client, image, args.repository_name)
     push = json.loads('[' + re.sub('\r\n', ',', push)[:-1] + ']')
     print json.dumps(push[-1]['aux'])
+
 
 # User variables
 def inputs():
@@ -54,31 +57,35 @@ def inputs():
     args = parser.parse_args()
     return args
 
+
 # Get the latest version of Foxpass from DockerHub
 def pull_foxpass(image_name):
     try:
         client = docker.from_env()
         image = client.images.pull(image_name)
-    except:
+    except docker.errors.APIError:
         raise
     return (client, image)
+
 
 # Push the ECR tagged latest image of Foxpass and push it to ECR
 def ecr_push(client, image, repository):
     target = ecr_tag(image, repository)
     registry, password, username = ecr_login()
-    login = client.login(username=username,password=password,registry=registry)
+    login = client.login(username=username, password=password, registry=registry)
     push = client.images.push(target + ':latest')
     return push
+
 
 # Tag the latest pull of Foxpass with the ECR URI
 def ecr_tag(image, repository):
     try:
         target_name = get_ecr_repo(repository)
         tag = image.tag(target_name)
-    except:
+    except ClientError:
         raise
     return target_name
+
 
 # Get the repo URI for ECR
 # IE: 123456789012.dkr.ecr.us-west-2.amazonaws.com/foxpass
@@ -87,12 +94,15 @@ def get_ecr_repo(repository):
         if repo['repositoryName'] == repository:
             return repo['repositoryUri']
 
+
 # Get the docker login for ECR
 def ecr_login():
     try:
         token = ECR.get_authorization_token()['authorizationData'][0]
         user, password = base64.b64decode(token['authorizationToken']).split(':')
-    except:
+    except base64.binascii.Error:
+        raise
+    except ClientError:
         raise
     return (token['proxyEndpoint'], password, user)
 
