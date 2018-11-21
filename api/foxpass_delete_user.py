@@ -22,7 +22,7 @@ def main():
     parser.add_argument('--username', required=True, help='Foxpass user name')
     args = parser.parse_args()
     header = {'Authorization': 'Token ' + args.api_key}
-    r = requests.delete(URL + ENDPOINT + args.user + '/', headers=header)
+    r = requests.delete(URL + ENDPOINT + args.username + '/', headers=header)
     print r.json()
 
 
