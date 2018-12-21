@@ -17,8 +17,7 @@ import requests
 URL = 'https://api.foxpass.com/v1/'
 ENDPOINT = 'users/'
 DATA = {'is_active': False}
-KEEP_LIST = [
-]
+KEEP_LIST = []
 
 
 def main():
@@ -48,7 +47,7 @@ def make_list(data):
 def deactivate_user(api_key, user):
     header = {'Authorization': 'Token ' + api_key}
     r = requests.put(URL + ENDPOINT + user + '/', headers=header, data=json.dumps(DATA))
-    print('Deactivated {}').format(user)
+    print('Deactivated {}'.format(user))
 
 
 if __name__ == '__main__':
