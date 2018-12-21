@@ -17,16 +17,18 @@ import requests
 URL = 'https://api.foxpass.com/v1/'
 ENDPOINT = 'users/'
 DATA = {'is_active': False}
-KEEP_LIST = []
 
 
 def main():
     parser = argparse.ArgumentParser(description='Deactivate Foxpass users')
     parser.add_argument('--api-key', required=True, help='Foxpass API Key')
+    parser.add_argument('--keep', nargs='*', help='List of users to keep')
     args = parser.parse_args()
     users = user_list(args.api_key)
+    keep_list = []
+    keep_list.append(args.keep)
     for user in users:
-        if user not in KEEP_LIST:
+        if user not in keep_list:
             deactivate_user(args.api_key, user)
 
 
