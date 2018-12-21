@@ -49,3 +49,7 @@ def deactivate_user(api_key, user):
     header = {'Authorization': 'Token ' + api_key}
     r = requests.put(URL + ENDPOINT + user + '/', headers=header, data=json.dumps(DATA))
     print('Deactivated {}').format(user)
+
+
+if __name__ == '__main__':
+    main()
