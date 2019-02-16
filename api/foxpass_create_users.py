@@ -20,7 +20,7 @@ ENDPOINT = 'users/'
 def main():
     parser = argparse.ArgumentParser(description='Create users in Foxpass')
     parser.add_argument('--api-key', required=True, help='Foxpass API Key')
-    parser.add_argument('--csv-file', required=True, help='.csv file with usernames and emails')
+    parser.add_argument('--csv-file', required=True, help='.csv file with emails and usernames')
     args = parser.parse_args()
     header = {'Authorization': 'Token ' + args.api_key}
     # parse csv file
@@ -32,7 +32,7 @@ def main():
                 username = row[1]
             except IndexError:
                 continue
-            data = {'username': username, 'email': email}
+            data = {'email': email, 'username': username}
             r = requests.post(URL + ENDPOINT, headers=header, data=json.dumps(data))
             print '{}: {}'.format(email, r.json())
 
