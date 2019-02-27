@@ -17,7 +17,7 @@ ENDPOINT = 'users/'
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Delete groups in Foxpass')
+    parser = argparse.ArgumentParser(description='Delete user in Foxpass')
     parser.add_argument('--api-key', required=True, help='Foxpass API Key')
     parser.add_argument('--username', required=True, help='Foxpass user name')
     args = parser.parse_args()
