@@ -30,11 +30,17 @@ def main():
             try:
                 email = row[0]
                 username = row[1]
+                password = row[2]
             except IndexError:
                 continue
             data = {'email': email, 'username': username}
             r = requests.post(URL + ENDPOINT, headers=header, data=json.dumps(data))
-            print '{}: {}'.format(email, r.json())
+            if r.json()['status'] == 'ok':
+                data = {'password': password}
+                r = requests.put(URL + ENDPOINT + username + '/', headers=header, data=json.dumps(data))
+                print '{}: {}'.format(email, r.json())
+            else:
+                print '{}: {}'.format(email, r.json())
 
 
 if __name__ == '__main__':
