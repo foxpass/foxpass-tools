@@ -8,8 +8,9 @@ To run:
 python foxpass_create_users.py --api-key <api_key> --csv-file <file name>
 
 File format:
-"<email address>,<username>,<password>"
+"<email address>,<username>[,<password>]"
 eg.
+test0@test.test,test0
 test1@test.test,test1,""
 test2@test.test,test2,""
 test3@non-domain.com,test3,abc123
@@ -38,17 +39,21 @@ def main():
             try:
                 email = row[0]
                 username = row[1]
-                password = row[2]
             except IndexError:
                 continue
             data = {'email': email, 'username': username}
             r = requests.post(URL + ENDPOINT, headers=header, data=json.dumps(data))
+            try:
+                password = row[2]
+            except IndexError:
+                print '{}: {}'.format(email, r.json()['status'])
+                continue
             if r.json()['status'] == 'ok' and password:
                 data = {'password': password}
                 r = requests.put(URL + ENDPOINT + username + '/', headers=header, data=json.dumps(data))
-                print '{}: {}'.format(email, r.json())
+                print '{}: password set'.format(email)
             else:
-                print '{}: {}'.format(email, r.json())
+                print '{}: {}'.format(email, r.json()['status'])
 
 
 if __name__ == '__main__':
