@@ -34,6 +34,7 @@ def main():
     header = {'Authorization': 'Token ' + args.api_key}
     # parse csv file
     with open(args.csv_file, 'rb') as f:
+        password = None
         reader = csv.reader(f)
         for row in reader:
             try:
@@ -46,8 +47,7 @@ def main():
             try:
                 password = row[2]
             except IndexError:
-                print '{}: {}'.format(email, r.json()['status'])
-                continue
+                pass  # password is already set ot None above, don't need to do it again.
             if r.json()['status'] == 'ok' and password:
                 data = {'password': password}
                 r = requests.put(URL + ENDPOINT + username + '/', headers=header, data=json.dumps(data))
