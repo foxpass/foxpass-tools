@@ -5,7 +5,10 @@ This script requires the external libraries from requests
 pip install requests
 
 To run:
-python foxpass_whitelist_sync.py --api-key <api_key> --hostname <DDNS_hostname> --whitelist-name <whitelist_name>
+python foxpass_ip_whitelist_sync.py --api-key <api_key> --hostname <DDNS_hostname> --whitelist-name <whitelist_name>
+
+NOTE: This script is for altering single IP whitelists that already exist only.  Use with extreme caution as it
+      can be destructive.
 """
 import argparse
 import json
@@ -31,6 +34,7 @@ def main():
         print('{} is already set to {}.'.format(args.whitelist_name, target_ip))
 
 
+# Try to retrieve the current whitelist, this will fail if it's not already created instead of creating it for you
 def get_whitelist_ip(header, whitelist):
     try:
         r = requests.get(API + whitelist + '/', headers=header)
@@ -40,6 +44,7 @@ def get_whitelist_ip(header, whitelist):
     return r.json()['data']['ip_address']
 
 
+# Re-created the whitelist with the new IP address
 def set_whitelist_ip(header, whitelist, target_ip):
     data = json.dumps({'name': whitelist, 'ip_address': target_ip})
     try:
@@ -50,6 +55,8 @@ def set_whitelist_ip(header, whitelist, target_ip):
     print('{} set to {}.'.format(whitelist, target_ip))
 
 
+# Remove whitelist if it has the wrong IP.
+# This is not a resiliant way to handle this, and can be overly destructive, use with caution.
 def clear_whitelist(header, whitelist):
     try:
         r = requests.delete(API + whitelist + '/', headers=header)
