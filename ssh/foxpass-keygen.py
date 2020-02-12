@@ -29,7 +29,6 @@ import datetime
 import getpass
 import json
 import os
-import stat
 import subprocess
 
 import requests
