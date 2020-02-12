@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright (c) 2015-present, Foxpass, Inc.
 # All rights reserved.
 #
@@ -29,6 +29,7 @@ import datetime
 import getpass
 import json
 import os
+import stat
 import subprocess
 
 import requests
@@ -42,24 +43,24 @@ def main():
                         help='Foxpass API url')
     args = parser.parse_args()
     api_base = args.api_url
-    email = raw_input("Email address: ")
+    email = input('Email address: ')
     password = getpass.getpass()
     # make sure the password is right
     keys = api_call(api_base, email, password, '/v1/my/sshkeys/')
     filename = create_ssh_key(email)
     add_key_to_foxpass(api_base, email, password, filename)
-    print ""
-    print "Don't forget to run ssh-add now. The -K adds the key to your keychain so it is loaded on boot:"
-    print ""
-    print "ssh-add -K %s" % (filename)
-    print ""
+    print('')
+    print('Don\'t forget to run ssh-add now. The -K adds the key to your keychain so it is loaded on boot:')
+    print('')
+    print('ssh-add -K {}'.format(filename))
+    print('')
 
 
 def add_key_to_foxpass(api_base, email, password, filename):
-    url = '%s/v1/my/sshkeys/' % (api_base,)
+    url = '{}/v1/my/sshkeys/'.format(api_base,)
     key_name = os.path.basename(filename)
     # post public portion
-    pub_filename = '%s.pub' % (filename)
+    pub_filename = '{}.pub'.format(filename)
     with open(pub_filename, 'r') as key_file:
         key_content = key_file.read().strip()
     key_info = {'name': key_name,
@@ -71,24 +72,24 @@ def create_ssh_key(email):
     home = os.environ.get('HOME')
     while True:
         date_str = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
-        filename = "%s/.ssh/foxpass-ssh-%s" % (home, date_str)
+        filename = '{}/.ssh/foxpass-ssh-{}'.format(home, date_str)
         cmd = ['ssh-keygen', '-t', 'rsa', '-b', '4096', '-C', email, '-f', filename]
-        print "Enter a password for the private key"
+        print('Enter a password for the private key')
         try:
             subprocess.check_call(cmd)
-            os.chmod(filename, 0600)
+            os.chmod(filename, 0o600)
             return filename
-        except:
+        except Exception:
             pass
 
 
 def api_call(api_base, email, password, url, post_data=None):
     final_url = api_base + url
     if post_data:
-        r = requests.post(final_url, data=json.dumps(post_data), auth=(email, password))
+        response = requests.post(final_url, data=json.dumps(post_data), auth=(email, password))
     else:
-        r = requests.get(final_url, auth=(email, password))
-    resp_data = r.json()
+        response = requests.get(final_url, auth=(email, password))
+    resp_data = response.json()
     if 'status' in resp_data and resp_data['status'] == 'error':
         raise Exception(resp_data['message'])
     return resp_data
