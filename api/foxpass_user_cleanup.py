@@ -27,7 +27,7 @@ def main():
     args = parser.parse_args()
     users = user_list(args.api_key, args.api_url)
     keep_list = []
-    keep_list = keep_list + args.keep
+    keep_list.extend(args.keep)
     for user in users:
         if user not in keep_list:
             deactivate_user(args.api_key, user, args.api_url)
