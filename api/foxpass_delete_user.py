@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 This script requires the external libraries from requests
@@ -19,11 +19,12 @@ ENDPOINT = 'users/'
 def main():
     parser = argparse.ArgumentParser(description='Delete user in Foxpass')
     parser.add_argument('--api-key', required=True, help='Foxpass API Key')
+    parser.add_argument('--api-url', default=URL, help='Foxpass API Url')
     parser.add_argument('--username', required=True, help='Foxpass user name')
     args = parser.parse_args()
     header = {'Authorization': 'Token ' + args.api_key}
-    r = requests.delete(URL + ENDPOINT + args.username + '/', headers=header)
-    print r.json()
+    r = requests.delete(args.api_url + ENDPOINT + args.username + '/', headers=header)
+    print(r.json())
 
 
 if __name__ == '__main__':

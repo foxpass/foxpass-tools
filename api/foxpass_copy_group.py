@@ -15,7 +15,6 @@ import requests
 
 URL = 'https://api.foxpass.com/v1/'
 ENDPOINT = 'groups/'
-API = URL + ENDPOINT
 
 
 def main():
@@ -35,6 +34,7 @@ def main():
 def get_args():
     parser = argparse.ArgumentParser(description='List users in Foxpass')
     parser.add_argument('--api-key', required=True, help='Foxpass API Key')
+    parser.add_argument('--api-url', default=URL, help='Foxpass API Url')
     parser.add_argument('--source-group', required=True, help='Source group name')
     parser.add_argument('--dest-group', required=True, help='Destination group name')
     return parser.parse_args()
@@ -42,8 +42,9 @@ def get_args():
 
 # return a list of users in a given group
 def get_group_list(header, group_name):
+    args = get_args()
     try:
-        r = requests.get(API + group_name + '/members/', headers=header)
+        r = requests.get(args.api_url + ENDPOINT + group_name + '/members/', headers=header)
         r.raise_for_status()
     except requests.exceptions.HTTPError as err:
         sys.exit(err)
@@ -59,9 +60,10 @@ def compare_list(source_list, dest_list):
 
 # add a foxpass user to a foxpass group
 def put_group_member(header, group_name, user_name):
+    args = get_args()
     data = json.dumps({'username': user_name})
     try:
-        r = requests.post(API + group_name + '/members/', headers=header, data=data)
+        r = requests.post(args.api_url + ENDPOINT + group_name + '/members/', headers=header, data=data)
         r.raise_for_status()
     except requests.exceptions.HTTPError as err:
         print('{} failed to add to {}\n{}'.format(user_name, group_name, err))
