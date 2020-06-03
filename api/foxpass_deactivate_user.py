@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 This script requires the external libraries from requests
@@ -21,11 +21,12 @@ DATA = {'is_active': False}
 def main():
     parser = argparse.ArgumentParser(description='Deactivate user in Foxpass')
     parser.add_argument('--api-key', required=True, help='Foxpass API Key')
+    parser.add_argument('--api-url', default=URL, help='Foxpass API Url')
     parser.add_argument('--user', required=True, help='Foxpass username')
     args = parser.parse_args()
     header = {'Authorization': 'Token ' + args.api_key}
-    r = requests.put(URL + ENDPOINT + args.user + '/', headers=header, data=json.dumps(DATA))
-    print r.json()
+    r = requests.put(args.api_url + ENDPOINT + args.user + '/', headers=header, data=json.dumps(DATA))
+    print(r.json())
 
 
 if __name__ == '__main__':

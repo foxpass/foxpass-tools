@@ -5,7 +5,9 @@ This script requires the external libraries from requests
 pip install requests
 
 To run:
+
 python foxpass_ip_whitelist_sync.py --api-key <api_key> --hostname <DDNS_hostname> --whitelist-name <whitelist_name>
+[Optional] --api-url <api-url>
 
 NOTE: This script is for altering single IP whitelists that already exist only.  Use with extreme caution as it
       can be destructive.
@@ -19,7 +21,6 @@ import requests
 
 URL = 'https://api.foxpass.com/v1/'
 ENDPOINT = 'whitelist_ips/'
-API = URL + ENDPOINT
 
 
 def main():
@@ -36,8 +37,9 @@ def main():
 
 # Try to retrieve the current whitelist, this will fail if it's not already created instead of creating it for you
 def get_whitelist_ip(header, whitelist):
+    args = get_args()
     try:
-        r = requests.get(API + whitelist + '/', headers=header)
+        r = requests.get(args.api_url + ENDPOINT + whitelist + '/', headers=header)
         r.raise_for_status()
     except requests.exceptions.HTTPError as err:
         sys.exit(err)
@@ -47,8 +49,9 @@ def get_whitelist_ip(header, whitelist):
 # Re-created the whitelist with the new IP address
 def set_whitelist_ip(header, whitelist, target_ip):
     data = json.dumps({'name': whitelist, 'ip_address': target_ip})
+    args = get_args()
     try:
-        r = requests.post(API, headers=header, data=data)
+        r = requests.get(args.api_url + ENDPOINT, headers=header, data=data)
         r.raise_for_status()
     except requests.exceptions.HTTPError as err:
         sys.exit('Failed to update {}.\n{}'.format(whitelist, err))
@@ -58,8 +61,9 @@ def set_whitelist_ip(header, whitelist, target_ip):
 # Remove whitelist if it has the wrong IP.
 # This is not a resiliant way to handle this, and can be overly destructive, use with caution.
 def clear_whitelist(header, whitelist):
+    args = get_args()
     try:
-        r = requests.delete(API + whitelist + '/', headers=header)
+        r = requests.delete(args.api_url + ENDPOINT + whitelist + '/', headers=header)
         r.raise_for_status()
     except requests.exceptions.HTTPError as err:
         sys.exit('Failed to delete {}, exiting.'.format(whitelist))
@@ -69,6 +73,7 @@ def clear_whitelist(header, whitelist):
 def get_args():
     parser = argparse.ArgumentParser(description='Sync Foxpass LDAP whitelist with DDNS ip')
     parser.add_argument('--api-key', required=True, help='Foxpass API Key')
+    parser.add_argument('--api-url', default=URL, help='Foxpass API Url')
     parser.add_argument('--hostname', required=True, help='Hostname to set whitelist to')
     parser.add_argument('--whitelist-name', required=True, help='Name of whitelist in Foxpass')
     return parser.parse_args()
