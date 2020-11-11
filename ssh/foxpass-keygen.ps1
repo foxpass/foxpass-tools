@@ -61,7 +61,22 @@ ok     {@{name=foxpass-ssh-20201111-10176.pub; signature=4d7d2c33ffc...; key=ssh
 ok
 
   .EXAMPLE
-.\foxpass-keygen.ps1 -Email bryan@foxpass.com -ApiUrl https://api.foxpass.com
+  .\foxpass-keygen.ps1 -Email bryan@foxpass.com
+
+PS .\foxpass-keygen.ps1 -Email bryan@foxpass.com
+Password: : **********
+
+Generating SSH key...
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Uploading SSH key to Foxpass...
+status data
+------ ----
+ok     {@{name=foxpass-ssh-20201111-10176.pub; signature=4d7d2c33ffc...; key=ssh-rsa AAAAB3NzaC1yc...
+ok
+
+  .EXAMPLE
+  .\foxpass-keygen.ps1 -Email bryan@foxpass.com -ApiUrl https://api.foxpass.com
 
 PS .\foxpass-keygen.ps1 -Email bryan@foxpass.com -ApiUrl https://api.foxpass.com
 Password: : **********
