@@ -33,8 +33,7 @@ import subprocess
 
 import requests
 
-# DEFAULT_BASE_URL = 'https://api.foxpass.com'
-DEFAULT_BASE_URL = 'http://localhost:8000/api'
+DEFAULT_BASE_URL = 'https://api.foxpass.com'
 
 
 def main():
