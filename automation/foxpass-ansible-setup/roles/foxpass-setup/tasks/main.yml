@@ -1,0 +1,9 @@
+---
+# tasks file for foxpass-setup
+
+- name: include aws inspector
+  include: aws-inspector.yml
+
+- name: include the right tasks by distro and major version
+  include: "{{ ansible_distribution }}/{{ ansible_distribution_version }}.yml"
+

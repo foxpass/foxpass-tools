@@ -1,0 +1,35 @@
+---
+# SSL switch
+ssl: on
+
+# Base DN
+base_dn:
+
+# Bind User
+bind_user:
+
+# Bind Password
+bind_pw:
+
+# API key
+api_key:
+
+# LDAP Server
+ldap_uris: 
+ - ldaps://ldap.foxpass.com
+
+# API Url
+api_uris:
+  - https://api.foxpass.com
+
+# Number of connections to make to LDAP server.
+ldap_connections: 2
+
+# LDAP idle timeout settings, default to 10m
+idle_timelimit: 600
+
+# Sudoers group with root access
+sudoers_group: foxpass-sudo
+
+# Set sudoers default password requirement
+require_sudoers_pw: False

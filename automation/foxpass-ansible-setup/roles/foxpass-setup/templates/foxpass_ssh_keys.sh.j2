@@ -1,0 +1,14 @@
+user="$1"
+secret="{{ api_key }}"
+hostname=`hostname`
+if grep -q "^${user}:" /etc/passwd; then exit; fi
+{% set append=''  %}
+{% if is_aws_environment %}
+{% set append='&aws_instance_id=${aws_instance_id}&aws_region_id=${aws_region_id}'  %}
+aws_instance_id=`curl -s -q -f http://169.254.169.254/latest/meta-data/instance-id`
+aws_region_id=`curl -s -q -f http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/.$//'` 
+{% endif %}
+{% for api in api_uris %}
+curl -s -q -m 5 -f -H "Authorization: Token ${secret}" "{{ api }}/sshkeys/?user=${user}&hostname=${hostname}{append}" 2>/dev/null
+{% endfor %}
+exit $?

@@ -1,0 +1,4 @@
+base_dn: dc=test,dc=com
+bind_user: binduser
+bind_pw: securedpw
+api_key: securedapikey

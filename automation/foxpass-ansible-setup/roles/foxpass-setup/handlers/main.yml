@@ -1,0 +1,25 @@
+---
+# handlers file for foxpass-setup
+- name: daemon reload
+  systemd:
+    daemon_reload: yes
+
+- name: stop ssh service
+  systemd:
+    name: ssh
+    state: stopped
+
+- name: restart ssh
+  systemd:
+    name: ssh
+    state: restarted
+
+- name: restart nslcd
+  systemd:
+    name: nslcd
+    state: restarted
+
+- name: restart nscd
+  systemd:
+    name: nscd
+    state: restarted
