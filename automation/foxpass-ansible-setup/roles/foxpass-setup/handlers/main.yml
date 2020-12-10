@@ -11,4 +11,3 @@
 
 - name: shared handlers
   import_tasks: common.yml
-

@@ -11,20 +11,25 @@ uid nslcd
 gid nslcd
 # The location at which the LDAP server(s) should be reachable.
 uri {{ ldap_uris |  join(' ') }}
+
 # The search base that will be used for all queries.
-base cn={{ bind_user }},{{ base_dn }}
+base {{ base_dn }}
+
 # The LDAP protocol version to use.
 #ldap_version 3
+
 # The DN to bind with for normal lookups.
 binddn cn={{ bind_user }},{{ base_dn }}
 bindpw {{ bind_pw }}
+
 # The DN used for password modifications by root.
 #rootpwmoddn cn=admin,dc=example,dc=com
-# SSL options
 
+# SSL options
 ssl {{ ssl }}
 tls_reqcert demand
 tls_cacertfile /etc/ssl/certs/ca-certificates.crt
+
 # The search scope.
 #scope sub
 # don't use LDAP for any users defined in /etc/passwd
