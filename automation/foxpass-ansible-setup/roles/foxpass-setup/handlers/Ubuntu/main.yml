@@ -1,0 +1,12 @@
+---
+# handlers specific to Ubuntu
+
+- name: restart nslcd
+  systemd:
+    name: nslcd
+    state: restarted
+
+- name: restart nscd
+  systemd:
+    name: nscd
+    state: restarted

@@ -1,25 +1,14 @@
 ---
 # handlers file for foxpass-setup
-- name: daemon reload
-  systemd:
-    daemon_reload: yes
 
-- name: stop ssh service
-  systemd:
-    name: ssh
-    state: stopped
+- name: specific handlers for Ubuntu
+  import_tasks: Ubuntu/main.yml
+  when: ansible_distribution == "Ubuntu"
 
-- name: restart ssh
-  systemd:
-    name: ssh
-    state: restarted
+- name: specific handlers for CentOS
+  import_tasks: Ubuntu/main.yml
+  when: ansible_distribution == "CentOS"
 
-- name: restart nslcd
-  systemd:
-    name: nslcd
-    state: restarted
+- name: shared handlers
+  import_tasks: common.yml
 
-- name: restart nscd
-  systemd:
-    name: nscd
-    state: restarted

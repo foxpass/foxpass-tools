@@ -1,8 +1,6 @@
 - hosts: 127.0.0.1
   gather_facts: yes
   connection: local
-  vars_files: 
-    - variables.yml
   roles:
     - role: foxpass-setup
 

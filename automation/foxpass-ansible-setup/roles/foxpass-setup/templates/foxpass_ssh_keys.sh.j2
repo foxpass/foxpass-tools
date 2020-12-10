@@ -1,7 +1,7 @@
 user="$1"
 secret="{{ api_key }}"
 hostname=`hostname`
-if grep -q "^${user}:" /etc/passwd; then exit; fi
+if grep -q "^${user/./\\.}:" /etc/passwd; then exit; fi
 {% set append=''  %}
 {% if is_aws_environment %}
 {% set append='&aws_instance_id=${aws_instance_id}&aws_region_id=${aws_region_id}'  %}

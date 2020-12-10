@@ -1,0 +1,17 @@
+---
+# shared handlers
+
+- name: daemon reload
+  systemd:
+    daemon_reload: yes
+
+- name: stop ssh service
+  systemd:
+    name: ssh
+    state: stopped
+
+- name: restart ssh
+  systemd:
+    name: ssh
+    state: restarted
+
