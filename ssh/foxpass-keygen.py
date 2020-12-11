@@ -42,37 +42,44 @@ def main():
                         help='Foxpass API url')
     args = parser.parse_args()
     api_base = args.api_url
+    filename = create_ssh_key()
+
     email = input('Email address: ')
     password = getpass.getpass()
-    # make sure the password is right
-    keys = api_call(api_base, email, password, '/v1/my/sshkeys/')
-    filename = create_ssh_key(email)
-    add_key_to_foxpass(api_base, email, password, filename)
-    print('')
-    print('Don\'t forget to run ssh-add now. The -K adds the key to your keychain so it is loaded on boot:')
-    print('')
-    print('ssh-add -K {}'.format(filename))
-    print('')
+    mfa_code = input('Foxpass MFA code:')
+
+    try:
+        add_key_to_foxpass(api_base, email, password, mfa_code, filename)
+        print('')
+        print('Don\'t forget to run ssh-add now. The -K adds the key to your keychain so it is loaded on boot:')
+        print('')
+        print('ssh-add -K {}'.format(filename))
+        print('')
+    except Exception as e:
+        print('Exception: {}'.format(e))
+        print('Operation failed, removing {}'.format(filename))
+        os.remove(filename)
+        os.remove(filename + '.pub')
 
 
-def add_key_to_foxpass(api_base, email, password, filename):
-    url = '{}/v1/my/sshkeys/'.format(api_base,)
+def add_key_to_foxpass(api_base, email, password, mfa_code, filename):
     key_name = os.path.basename(filename)
     # post public portion
     pub_filename = '{}.pub'.format(filename)
     with open(pub_filename, 'r') as key_file:
         key_content = key_file.read().strip()
-    key_info = {'name': key_name,
+    key_info = {'mfa_code': mfa_code,
+                'name': key_name,
                 'key': key_content}
     api_call(api_base, email, password, '/v1/my/sshkeys/', post_data=key_info)
 
 
-def create_ssh_key(email):
+def create_ssh_key():
     home = os.environ.get('HOME')
     while True:
         date_str = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
         filename = '{}/.ssh/foxpass-ssh-{}'.format(home, date_str)
-        cmd = ['ssh-keygen', '-t', 'rsa', '-b', '4096', '-C', email, '-f', filename]
+        cmd = ['ssh-keygen', '-t', 'rsa', '-b', '4096', '-f', filename]
         print('Enter a password for the private key')
         try:
             subprocess.check_call(cmd)
