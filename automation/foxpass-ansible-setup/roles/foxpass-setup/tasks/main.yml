@@ -8,4 +8,4 @@
   include: common.yml
 
 - name: include the right tasks by distro and major version
-  include: "{{ ansible_distribution }}/{{ ansible_distribution_version }}.yml"
+  include: "{{ ansible_distribution }}/main.yml"

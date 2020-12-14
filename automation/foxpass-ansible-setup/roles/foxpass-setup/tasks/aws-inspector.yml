@@ -5,7 +5,7 @@
   uri:
     url: http://169.254.169.254/latest/meta-data
     timeout: 2
-  failed_when: false
+  failed_when: False
   register: aws_uri_check
 
 - name: set is_aws_enviroment variable

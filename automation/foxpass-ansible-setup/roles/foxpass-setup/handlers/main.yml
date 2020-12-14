@@ -1,6 +1,9 @@
 ---
 # handlers file for foxpass-setup
 
+- name: shared handlers
+  import_tasks: common.yml
+
 - name: specific handlers for Ubuntu
   import_tasks: Ubuntu/main.yml
   when: ansible_distribution == "Ubuntu"
@@ -8,6 +11,3 @@
 - name: specific handlers for CentOS
   import_tasks: CentOS/main.yml
   when: ansible_distribution == "CentOS"
-
-- name: shared handlers
-  import_tasks: common.yml

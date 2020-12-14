@@ -1,0 +1,7 @@
+
+---
+# tasks file for Ubuntu
+
+- name: include the right tasks by distro and major version
+  include: "20.04.yml"
+  when: ansible_distribution_version is version('18.04', operator='>=')

@@ -7,7 +7,7 @@ ldap_uri = {{ ldap_uris[0] }}
 ldap_search_base = {{ base_dn  }}
 
 {% if ldaps_uris[1] is defined  %}
-ldap_backup_uri = {{  ldap_urls | slice(1) | join(',')  }}
+ldap_backup_uri = {{  ldap_uris | slice(1) | join(',')  }}
 {% endif %}
 
 access_provider = permit
