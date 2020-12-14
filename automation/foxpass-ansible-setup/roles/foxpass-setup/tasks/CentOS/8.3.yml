@@ -1,0 +1,36 @@
+---
+# Centos 8.3 specific tasks
+
+- name: install a list dependencies for Foxpass
+  yum: 
+    pkg:
+    - sssd
+    - authconfig
+
+- name: run authconfig
+  command: authconfig --enablesssd --enablesssdauth --enablelocauthorize --enableldap --enableldapauth --ldapserver={{ ldap_uris[0] }} --disableldaptls --ldapbasedn={{  base_dn  }} --enablemkhomedir --enablecachecreds --update
+
+- name: write authconfig-sssd.conf
+  template:
+    src: authconfig-sssd.conf.j2
+    dest: /etc/sssd/conf.d/authconfig-sssd.conf
+    mode: '0600'
+  notify:
+    - restart sssd
+    - restart sshd
+
+- name: update sudoers file when not require pw
+  lineinfile:
+    path: /etc/sudoers
+    regex: "^%wheel ALL=(ALL:ALL) ALL"
+    line: "%wheel ALL=(ALL:ALL) NOPASSWD:ALL"
+    backrefs: yes
+  when: not require_sudoers_pw
+
+- name: update sudoers file when require pw
+  lineinfile:
+    path: /etc/sudoers
+    regex: "^%wheel ALL=(ALL:ALL) NOPASSWD:ALL"
+    line: "%wheel ALL=(ALL:ALL) ALL"
+    backrefs: yes
+  when: require_sudoers_pw

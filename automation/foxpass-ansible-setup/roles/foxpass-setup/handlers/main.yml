@@ -6,7 +6,7 @@
   when: ansible_distribution == "Ubuntu"
 
 - name: specific handlers for CentOS
-  import_tasks: Ubuntu/main.yml
+  import_tasks: CentOS/main.yml
   when: ansible_distribution == "CentOS"
 
 - name: shared handlers

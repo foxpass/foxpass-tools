@@ -26,7 +26,7 @@
 - name: check sudoers
   lineinfile:
     path: /etc/sudoers
-    line: "^#includedir /etc/sudoers.d"
+    line: "#includedir /etc/sudoers.d"
     state: absent 
   check_mode: yes
   changed_when: False
@@ -43,3 +43,9 @@
     path: /etc/sudoers.d
     state: directory
     mode: '0750'
+
+- name: place sudoers.d file template
+  template: 
+    src: 95-foxpass-sudo.j2
+    dest: /etc/sudoers.d/95-foxpass-sudo
+
