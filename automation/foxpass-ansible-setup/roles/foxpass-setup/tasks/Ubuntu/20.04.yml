@@ -62,20 +62,21 @@
   notify:
     - restart nslcd
     - restart nscd
+    - restart ssh
 
 - name: update sudoers file when not require pw
   lineinfile:
     path: /etc/sudoers
-    regex: "^%sudo ALL=(ALL:ALL) ALL"
-    line: "%sudo ALL=(ALL:ALL) NOPASSWD:ALL"
+    regex: "%sudo"
+    line: "%sudo   ALL=(ALL:ALL) NOPASSWD:ALL"
     backrefs: yes
   when: not require_sudoers_pw
 
 - name: update sudoers file when require pw
   lineinfile:
     path: /etc/sudoers
-    regex: "^%sudo ALL=(ALL:ALL) NOPASSWD:ALL"
-    line: "%sudo ALL=(ALL:ALL) ALL"
+    regex: "%sudo"
+    line: "%sudo   ALL=(ALL:ALL) ALL"
     backrefs: yes
   when: require_sudoers_pw
 

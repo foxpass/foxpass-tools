@@ -22,15 +22,15 @@
 - name: update sudoers file when not require pw
   lineinfile:
     path: /etc/sudoers
-    regex: "^%wheel ALL=(ALL:ALL) ALL"
-    line: "%wheel ALL=(ALL:ALL) NOPASSWD:ALL"
+    regex: "%wheel"
+    line: "%wheel   ALL=(ALL:ALL) NOPASSWD:ALL"
     backrefs: yes
   when: not require_sudoers_pw
 
 - name: update sudoers file when require pw
   lineinfile:
     path: /etc/sudoers
-    regex: "^%wheel ALL=(ALL:ALL) NOPASSWD:ALL"
-    line: "%wheel ALL=(ALL:ALL) ALL"
+    regex: "%wheel"
+    line: "%wheel   ALL=(ALL:ALL) ALL"
     backrefs: yes
   when: require_sudoers_pw
