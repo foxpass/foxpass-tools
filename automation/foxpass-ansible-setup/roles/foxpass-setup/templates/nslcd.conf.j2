@@ -1,0 +1,36 @@
+# /etc/nslcd.conf
+# nslcd configuration file. See nslcd.conf(5)
+# for details.
+# number of threads. one LDAP connction per thread.
+threads {{ ldap_connections }}
+# Set how long to keep ldap connections to foxpass open.
+# By default Foxpass sets this to 600s.
+idle_timelimit {{ idle_timelimit }}
+# The user and group nslcd should run as.
+uid nslcd
+gid nslcd
+# The location at which the LDAP server(s) should be reachable.
+uri {{ ldap_uris |  join(' ') }}
+
+# The search base that will be used for all queries.
+base {{ base_dn }}
+
+# The LDAP protocol version to use.
+#ldap_version 3
+
+# The DN to bind with for normal lookups.
+binddn cn={{ bind_user }},{{ base_dn }}
+bindpw {{ bind_pw }}
+
+# The DN used for password modifications by root.
+#rootpwmoddn cn=admin,dc=example,dc=com
+
+# SSL options
+ssl {{ ssl }}
+tls_reqcert demand
+tls_cacertfile /etc/ssl/certs/ca-certificates.crt
+
+# The search scope.
+#scope sub
+# don't use LDAP for any users defined in /etc/passwd
+nss_initgroups_ignoreusers ALLLOCAL

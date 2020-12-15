@@ -1,0 +1,12 @@
+---
+# handlers specific to CentOS
+
+- name: restart sssd
+  systemd:
+    name: sssd
+    state: restarted
+
+- name: restart sshd
+  systemd:
+    name: sshd
+    state: restarted

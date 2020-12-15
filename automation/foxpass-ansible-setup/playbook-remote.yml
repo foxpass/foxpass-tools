@@ -1,0 +1,9 @@
+- hosts: testserver
+  remote_user: ubuntu
+  gather_facts: yes
+  become: yes
+  vars_files:
+    - variables.yml
+  roles:
+    - role: foxpass-setup
+

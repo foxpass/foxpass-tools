@@ -1,0 +1,22 @@
+[sssd]
+domains = default
+
+[domain/default]
+id_provider = ldap
+ldap_uri = {{ ldap_uris[0] }}
+ldap_search_base = {{ base_dn  }}
+
+{% if ldaps_uris[1] is defined  %}
+ldap_backup_uri = {{  ldap_uris | slice(1) | join(',')  }}
+{% endif %}
+
+access_provider = permit
+sudo_provider = ldap
+auth_provider = ldap
+autofs_provider = ldap
+resolver_provider = ldap
+ldap_tls_reqcert = demand
+ldap_tls_cacert = /etc/ssl/certs/ca-bundle.crt
+ldap_default_bind_dn = cn={{  bind_user  }},{{  base_dn  }}
+ldap_default_authtok = {{  bind_pw }}
+enumerate = True

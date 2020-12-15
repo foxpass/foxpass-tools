@@ -1,0 +1,11 @@
+---
+# tasks file for foxpass-setup
+
+- name: include aws inspector
+  include: aws-inspector.yml
+
+- name: include the shared tasks
+  include: common.yml
+
+- name: include the right tasks by distro and major version
+  include: "{{ ansible_distribution }}/main.yml"
