@@ -14,8 +14,7 @@ import json
 
 import requests
 
-# URL = 'https://api.foxpass.com/v1/'
-URL = 'http://localhost:8000/api/v1/'
+URL = 'https://api.foxpass.com/v1/'
 ENDPOINT = 'users/'
 DATA = {'is_active': False}
 
