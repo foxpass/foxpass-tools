@@ -57,9 +57,9 @@ def check_group_for_user(api_key, group, api_url):
 
     user = r.json()['data']
 
-    # compare gid's
-    if user['gid'] != group['gid']:
-        print("Group & user {}: gid does not match {}-{}".format(group['name'], group['gid'], user['gid']))
+    # compare uid to gid
+    if user['uid'] != group['gid']:
+        print("Group {} gid & user uid does not match {}-{}".format(group['name'], group['gid'], user['uid']))
         return False
 
     # username matches group name and gid matches
