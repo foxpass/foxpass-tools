@@ -50,7 +50,10 @@ def make_list(data):
 def deactivate_user(api_key, user, api_url):
     header = {'Authorization': 'Token ' + api_key}
     r = requests.put(api_url + ENDPOINT + user + '/', headers=header, data=json.dumps(DATA))
-    print('Deactivated {}'.format(user))
+    if r.status_code == requests.codes.ok:
+        print('Deleted group {}'.format(user))
+    else:
+        print('Error deleting group {}. Status code: {}'.format(user, r.status_code))
 
 
 if __name__ == '__main__':
