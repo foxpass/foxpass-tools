@@ -36,8 +36,7 @@ def user_list(api_key, api_url):
     r = requests.get(api_url + ENDPOINT, headers=header)
 
     # check to make sure request completed successfully
-    if not r.status_code == requests.codes.ok:
-        r.raise_for_status()
+    r.raise_for_status()
 
     users = []
     for user in r.json()['data']:
