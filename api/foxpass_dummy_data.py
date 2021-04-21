@@ -4,10 +4,11 @@
 This script is used to generate fake data into the target environment.
 You have to map the custom fields from the target environment to the --custom-fields parameter
 
+Required packages:
 pip install requests faker
 
 To run:
-python foxpass_dummy_data.py --api-key <api_key> --api-url localhost --custom_fields c l title postalCode --user-count 2
+python foxpass_dummy_data.py --api-key <api_key> --api-url https://example.com/v1/ --user-domain example.com --custom-fields c l title postalCode --user-count 2
 """
 
 import argparse
@@ -50,13 +51,17 @@ def update_users(faker, header, users, custom_fields, api_url):
             cfields[cf] = generate_value_cf_type(cf, faker)
         user['custom_fields'] = cfields
         r = requests.put("{}{}{}".format(api_url,ENDPOINT,user['username']), headers=header, data=json.dumps(user))
-        print('{}: {}'.format(user['email'], r.json()))
+        print('{}: {}'.format(user['email'], r))
 
 
 # Generate values based on the cf type
 def generate_value_cf_type(cf, faker):
     if cf == 'c':
         return faker.country()
+    elif cf == 'l':
+        return faker.street_name()
+    elif cf in ['description', 'title']:
+        return faker.job()
     else:
         return faker.lexify('???????????')
 
@@ -65,7 +70,7 @@ def get_args():
     parser = argparse.ArgumentParser(description='List users in Foxpass')
     parser.add_argument('--api-key', required=True, help='Foxpass API Key')
     parser.add_argument('--api-url', default=URL, help='Foxpass API Url')
-    parser.add_argument('--user-domain', default='foxpass.com', help='Default email domain')
+    parser.add_argument('--user-domain', required=True, help='Email domain of the users')
     parser.add_argument('--user-count', default=1, help='Number of users to populate')
     parser.add_argument('--custom-fields', nargs='*', default=[], help='Custom fields to populate')
     return parser.parse_args()
