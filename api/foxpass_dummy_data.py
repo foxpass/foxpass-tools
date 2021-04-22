@@ -145,7 +145,7 @@ def generate_value_cf_type(cf, fake):
         'date': 'date',
         'dob':  'fake.date_of_birth',
         'id': 'random_int',
-        'mobile': 'mobile',
+        'mobile': 'phone_number',
         'name': 'name',
         'number': 'random_int',
         'phone': 'phone_number',
