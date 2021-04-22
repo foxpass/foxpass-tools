@@ -89,14 +89,20 @@ def create_users(fake, user_domain, user_count, groups):
         username = 'dummy_user_{}'.format(first_name.lower())
         data = {
             'email': '{}@{}'.format(username, user_domain), 
-            'username': username, 
-            'first_name':first_name, 
-            'last_name':last_name,
-            'is_active': True
+            'username': username
         }
         if send_api_request('POST', '/v1/users/', data=data):
             log('Successfully created user {}'.format(username))
             users.append(username)
+            
+            # update user properties
+            data = {
+                'first_name': first_name, 
+                'last_name': last_name,
+                'is_active': True
+            }
+            send_api_request('PUT', '/v1/users/{}/'.format(username), data)
+            
             # add user to a random group
             if groups and len(groups) >= 1:
                 group_name = random.choice(groups)
@@ -129,9 +135,27 @@ def update_custom_fields(fake, users, custom_fields):
 def generate_value_cf_type(cf, fake):
     try:
         # following will call a function named cf if that exists for faker and it's modules
-        return str(getattr(fake, cf)())
+        if hasattr(fake, cf):
+            return str(getattr(fake, cf)())
     except:
-        return fake.lexify(len(cf))
+        pass
+    mapping = {
+        'account': 'random_int',
+        'address': 'address',
+        'date': 'date',
+        'dob':  'fake.date_of_birth',
+        'id': 'random_int',
+        'mobile': 'mobile',
+        'name': 'name',
+        'number': 'random_int',
+        'phone': 'phone_number',
+        'time': 'time',
+        'uri': 'uri'
+    }
+    for k, v in mapping.items():
+        if k in cf.lower():
+            return str(getattr(fake, v)())
+    return fake.lexify('?' * len(cf))
 
 
 # Return the command line arguments
