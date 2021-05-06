@@ -1,0 +1,74 @@
+{
+	"id": "971000c0-4165-4a9c-a7a4-a58dbba0776d",
+	"name": "foxpass-api-collection-env",
+	"values": [
+		{
+			"key": "PROTOCOL",
+			"value": "https",
+			"enabled": true
+		},
+		{
+			"key": "HOST_NAME",
+			"value": "api.foxpass.com/v1",
+			"enabled": true
+		},
+		{
+			"key": "TOKEN_API_KEY",
+			"value": "Token <PUT_TOKEN_API_KEY_HERE>",
+			"enabled": true
+		},
+		{
+			"key": "USER",
+			"value": "just_a_test",
+			"enabled": true
+		},
+		{
+			"key": "USER_PASSWORD",
+			"value": "just_a_test",
+			"enabled": true
+		},
+		{
+			"key": "GROUP",
+			"value": "just_a_test",
+			"enabled": true
+		},
+		{
+			"key": "HOST_GROUP",
+			"value": "just_a_test",
+			"enabled": true
+		},
+		{
+			"key": "SSH_KEY",
+			"value": "just_a_test",
+			"enabled": true
+		},
+		{
+			"key": "WHITELIST_IP",
+			"value": "just_a_test",
+			"enabled": true
+		},
+		{
+			"key": "MAC_ENTRY",
+			"value": "just_a_test",
+			"enabled": true
+		},
+		{
+			"key": "SUDOER_NAME",
+			"value": "just_a_test",
+			"enabled": true
+		},
+		{
+			"key": "LDAP_BINDER",
+			"value": "just_a_test",
+			"enabled": true
+		},
+		{
+			"key": "LDAP_BINDER_PASSWORD",
+			"value": "just_a_test",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2021-04-29T20:31:33.664Z",
+	"_postman_exported_using": "Postman/8.3.0-210429-0700"
+}

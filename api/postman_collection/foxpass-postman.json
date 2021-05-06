@@ -1,0 +1,2289 @@
+{
+	"info": {
+		"_postman_id": "ed760582-1ea0-44df-ac31-9161d458c871",
+		"name": "Postman - Foxpass API Collection",
+		"description": "# API Overview\n\nFoxpass offers an API to view and manage directory data and other settings. The API is useful for integrating with any custom tools you use or for automating certain tasks. To read more about the API endpoints and specifications, just read below. If there's an endpoint or feature you'd like to see supported, just email us at help@foxpass.com.",
+		"schema": "{{PROTOCOL}}://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get list of all users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"description": "Get list of all users",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/users/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								""
+							]
+						},
+						"description": "# Get list of all users"
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{USER}}\",\r\n    \"email\": \"{{USER}}@foxpass.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/users/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								""
+							]
+						},
+						"description": "# Create a new user\n\n## HEADERS\n* username (*string, mandatory*)\n* email (*string, mandatory*)\n* send_email *boolean*\n  * sends an email with a link to set a Foxpass password for console logins, if necessary."
+					},
+					"response": []
+				},
+				{
+					"name": "Get properties of a single user",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/users/{{USER}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"{{USER}}",
+								""
+							]
+						},
+						"description": "# Get properties of a single user\n\n## PATH PARAMS\n* username (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Changes properties of a single user",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"is_eng_user\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/users/{{USER}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"{{USER}}",
+								""
+							]
+						},
+						"description": "# Change properties of a single user\n\n## Body Params\n\n* first_name *string*\n* last_name *string*\n* github_username *string*\n* password *string*\n* is_eng_user *boolean*\n* is_posix_user *boolean*\n* is_active *boolean*\n* custom_fields *object*\n  * JSON object with keys as custom fields\n```json\ncustom_field_name_1 \nstring\nSet the key as the custom field name. The variable name, not the display name. e.x. '{\"custom_fields\" : {\"custom_field_name_1\": \"value_1\", \"custom_field_name_2\": \"value_2\"}}'\n```\n```json\ncustom_field_name_2\nstring\nSet the key as the custom field name. The variable name, not the display name. e.x. '{\"custom_fields\" : {\"custom_field_name_1\": \"value_1\", \"custom_field_name_2\": \"value_2\"}}'\n```\n* uid *int32*\n* gid *int32*\n* shell *string*\n* username *string*"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a single user",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/users/{{USER}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"{{USER}}",
+								""
+							]
+						},
+						"description": "# PATH PARAMS\n* username *string*\n\nValid fields are 'first_name', 'last_name', 'password', 'is_eng_user', 'github_username', 'is_active'"
+					},
+					"response": []
+				},
+				{
+					"name": "Get SSH keys for a given user",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/users/{{USER}}/sshkeys/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"{{USER}}",
+								"sshkeys",
+								" "
+							]
+						},
+						"description": "# Get SSH keys for a given user\n\n## PATH PARAMS\n* username (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Add a new SSH key",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"{{SSH_KEY}}\",\r\n    \"key\": \"ssh-rsa AAAA0000111122223333\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/users/{{USER}}/sshkeys/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"{{USER}}",
+								"sshkeys",
+								""
+							]
+						},
+						"description": "# Add a new SSH Key\n\n## PATH PARAMS\n* username (*string, mandatory*)\n\n## BODY PARAMS\n* name (*string, mandatory*)\n* key (*string, mandatory*)\n* key_type *string*"
+					},
+					"response": []
+				},
+				{
+					"name": "Modify an SSH key",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"is_active\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/users/{{USER}}/sshkeys/{{SSH_KEY}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"{{USER}}",
+								"sshkeys",
+								"{{SSH_KEY}}",
+								""
+							]
+						},
+						"description": "# Modify an SSH key\n\n## PATH PARAMS\n* username (*string, mandatory*)\n* sshkey (*string, mandatory*)\n\n## BODY PARAMS\n* is_active (*boolean, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete an SSH key",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/users/{{USER}}/sshkeys/{{SSH_KEY}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"{{USER}}",
+								"sshkeys",
+								"{{SSH_KEY}}",
+								""
+							]
+						},
+						"description": "# Delete and an SSH key\n\n***DELETE*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/users/username/sshkeys/sshkey/`\n\n## PATH PARAMS\n* username (*string, mandatory*)\n* sshkey (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get group membership info for a given user",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/users/{{USER}}/groups/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"{{USER}}",
+								"groups",
+								""
+							]
+						},
+						"description": "# Get group membership info for a given user\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/users/username/groups/`\n\n## PATH PARAMS\n* username (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Add user to a group",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"{{GROUP}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/users/{{USER}}/groups/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"{{USER}}",
+								"groups",
+								""
+							]
+						},
+						"description": "# Add user to a group\n\n***POST*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/users/username/groups/`\n\n## PATH PARAMS\n* username (*string, mandatory*)\n\n## BODY PARAMS\n* name (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Check if an user is in a group",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/users/{{USER}}/groups/{{GROUP}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"{{USER}}",
+								"groups",
+								"{{GROUP}}",
+								""
+							]
+						},
+						"description": "# Check if an user is in a group\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/users/username/groups/groupname/`\n\n#PATH PARAMS\n* username (*string, mandatory*)\n* groupname (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a user from a group",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/users/{{USER}}/groups/{{GROUP}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"{{USER}}",
+								"groups",
+								"{{GROUP}}",
+								""
+							]
+						},
+						"description": "# Remove an user from a group\n\n***DELETE*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/users/username/groups/groupname/`\n\n## PATH PARAMS\n* username (*string, mandatory*)\n* groupname (*string, mandatory*)"
+					},
+					"response": []
+				}
+			],
+			"description": "Postman Collection for REST API Calls for users"
+		},
+		{
+			"name": "Groups",
+			"item": [
+				{
+					"name": "Get list of all groups",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/groups/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"groups",
+								""
+							]
+						},
+						"description": "# Get list of all groups\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/groups/`"
+					},
+					"response": []
+				},
+				{
+					"name": "Add a group",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"mygroup\",\r\n    \"gid\": 510,\r\n    \"is_posix_group\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/groups/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"groups",
+								""
+							]
+						},
+						"description": "# Add a group\n\n***POST*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/groups/`\n\n## BODY PARAMS\n* name *string*\n* gid *int32*\n* is_posix_group *boolean*"
+					},
+					"response": []
+				},
+				{
+					"name": "Get info for a group",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/groups/{{GROUP}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"groups",
+								"{{GROUP}}",
+								""
+							]
+						},
+						"description": "# Get info for a group\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/groups/groupname/`\n\n# PATH PARAMS\n* groupname (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a group",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/groups/{{GROUP}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"groups",
+								"{{GROUP}}",
+								""
+							]
+						},
+						"description": "# Delete a group\n\n***DELETE*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/groups/groupname/`\n\n```curl\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X DELETE {{PROTOCOL}}://{{HOST_NAME}}/v1/groups/{{GROUP}}/\n```\n\n## PATH PARAMS\n* groupname (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get members for a group",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/groups/{{GROUP}}/members/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"groups",
+								"{{GROUP}}",
+								"members",
+								""
+							]
+						},
+						"description": "# Get members for a group\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/groups/groupname/members/`\n\n```curl\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/groups/{{GROUP}}/members/\n```\n\n## PATH PARAMS\n* groupname (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Add a member to a group",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{USER}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/groups/{{GROUP}}/members/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"groups",
+								"{{GROUP}}",
+								"members",
+								""
+							]
+						},
+						"description": "# Add a member to a group\n\n***POST*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/groups/groupname/members/`\n\n```curl\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X POST -d '{\"username\": \"{{USER}}\"}' {{PROTOCOL}}://{{HOST_NAME}}/v1/groups/{{GROUP}}/members/\n```\n\n## PATH PARAMS\n* groupname (*string, mandatory*)\n\n## BODY PARAMS\n* username (*string, mandatory*)\n* expires *date*\n  * *expiration of group membership. 'YYYY-MM-DDTHH:MMZ' format*"
+					},
+					"response": []
+				},
+				{
+					"name": "Check if a member is in a group",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/groups/{{GROUP}}/members/{{USER}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"groups",
+								"{{GROUP}}",
+								"members",
+								"{{USER}}",
+								""
+							]
+						},
+						"description": "# Check if a member is in a group\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/groups/groupname/members/username/`\n\n```curl\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/groups/{{GROUP}}/members/{{USER}}/\n```\n\n## PATH PARAMS\n* groupname (*string, mandatory*)\n* username (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a member from a group",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/groups/{{GROUP}}/members/{{USER}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"groups",
+								"{{GROUP}}",
+								"members",
+								"{{USER}}",
+								""
+							]
+						},
+						"description": "# Remove a member from a group\n\n***DELETE*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/groups/groupname/members/username/`\n\n```curl\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X DELETE {{PROTOCOL}}://{{HOST_NAME}}/v1/groups/{{GROUP}}/members/{{USER}}/\n```\n\n## PATH PARAMS\n* groupname (*string, mandatory*)\n* username (*string, mandatory*)"
+					},
+					"response": []
+				}
+			],
+			"description": "Postman Collection for REST API Calls for groups."
+		},
+		{
+			"name": "Host Groups",
+			"item": [
+				{
+					"name": "Get list of all host groups",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"hostgroups",
+								""
+							]
+						},
+						"description": "# Get list of all host groups\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/`\n\n```curl\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Add a host group",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"{{HOST_GROUP}}\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"hostgroups",
+								""
+							]
+						},
+						"description": "# Add a host group\n\n***POST*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/`\n\n```curl\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X POST -d '{\"name\": \"myhostgroup\"}' {{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/\n```\n\n## QUERY PARAMS\n* name (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get info for a host group",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"hostgroups",
+								"{{HOST_GROUP}}",
+								""
+							]
+						},
+						"description": "# Get info for a host group\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/hostgroupname/`\n\n```curl\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/\n```\n\n## PATH PARAMS\n* hostgroupname (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Set info for a host group",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"all_users\": false,\r\n    \"rules\": [\r\n        {\r\n            \"field\": \"hostname\",\r\n            \"type\": \"regex\",\r\n            \"value\": \".*\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"hostgroups",
+								"{{HOST_GROUP}}",
+								""
+							]
+						},
+						"description": "# Set info for a host group\n\n***PUT*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/hostgroupname/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X PUT -d '{\"all_users\": false, \"rules\": [{\"field\": \"hostname\", \"type\": \"regex\", \"value\": \".*\"}]}' {{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/\n```\n\n## PATH PARAMS\n* hostgroupname (*string, mandatory*)\n\n## BODY PARAMS\n* all_users *string*\n* rules *array of objects*\n  * field (*string, mandatory*)\n  * type (*string, mandatory*)\n  * negated *boolean*\n  * value\n* operator *string*"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a host group",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"hostgroups",
+								"{{HOST_GROUP}}",
+								""
+							]
+						},
+						"description": "# Delete a host group\n\n***DELETE*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/hostgroupname/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X DELETE {{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/\n```\n\n## PATH PARAMS\n* hostgroupname (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get user members for a host group",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token APIT_KEY",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/user_members/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"hostgroups",
+								"{{HOST_GROUP}}",
+								"user_members",
+								""
+							]
+						},
+						"description": "# Get user members for a host group\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/hostgroupname/user_members/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}'  {{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/user_members/\n```\n\n## PATH PARAMS\n* hostgroupname (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Add a member to a host group",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{USER}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/user_members/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"hostgroups",
+								"{{HOST_GROUP}}",
+								"user_members",
+								""
+							]
+						},
+						"description": "# Add a member to a host group\n\n***POST** `{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/hostgroupname/user_members/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X POST -d '{\"username\": \"{{USER}}\"}' {{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/user_members/\n```\n\n## PATH PARAMS\n* hostgroupname (*string, mandatory*)\n\n## BODY PARAMS\n* username (*string, mandatory*)\n* expires *date*\n  * *expiration of host group membership. 'YYYY-MM-DDTHH:MMZ' format*"
+					},
+					"response": []
+				},
+				{
+					"name": "Check if a member is in a host group",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/user_members/{{USER}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"hostgroups",
+								"{{HOST_GROUP}}",
+								"user_members",
+								"{{USER}}",
+								""
+							]
+						},
+						"description": "# Check if a member is in a host group\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/hostgroupname/user_members/username/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/user_members/{{USER}}/\n```\n\n## PATH PARAMS\n* hostgroupname (*string, mandatory*)\n* username (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a user from a host group",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/user_members/{{USER}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"hostgroups",
+								"{{HOST_GROUP}}",
+								"user_members",
+								"{{USER}}",
+								""
+							]
+						},
+						"description": "# Remove a user from a host group\n\n***DELETE*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/hostgroupname/user_members/username/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X DELETE {{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/user_members/{{USER}}/\n```\n\n## PATH PARAMS\n* hostgroupname (*string, mandatory*)\n* username (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get group members for a host group",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/group_members/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"hostgroups",
+								"{{HOST_GROUP}}",
+								"group_members",
+								""
+							]
+						},
+						"description": "# Get group members for a host group\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/hostgroupname/group_members/\n`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}'  {{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/group_members/\n```\n\n## PATH PARAMS\n* hostgroupname (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Add a group to a host group",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"groupname\": \"{{GROUP}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/group_members/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"hostgroups",
+								"{{HOST_GROUP}}",
+								"group_members",
+								""
+							]
+						},
+						"description": "# Add a group to a host group\n\n***POST*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/hostgroupname/group_members/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X POST -d '{\"groupname\": \"{{GROUP}}\"}' {{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/group_members/\n```\n\n## PATH PARAMS\n* hostgroupname (*string, mandatory*)\n\n## BODY PARAMS\n* groupname (*string, mandatory*)\n* expires *date*\n  * *expiration of host group membership. 'YYYY-MM-DDTHH:MMZ' format*"
+					},
+					"response": []
+				},
+				{
+					"name": "Check if a group is a member of a host group",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/group_members/{{GROUP}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"hostgroups",
+								"{{HOST_GROUP}}",
+								"group_members",
+								"{{GROUP}}",
+								""
+							]
+						},
+						"description": "# Check if a group is a member of a host group\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/hostgroupname/group_members/groupname/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/group_members/{{GROUP}}/\n```\n\n## PATH PARAMS\n* hostgroupname (*string, mandatory*)\n* groupname (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a group from a host group",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/group_members/{{GROUP}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"hostgroups",
+								"{{HOST_GROUP}}",
+								"group_members",
+								"{{GROUP}}",
+								""
+							]
+						},
+						"description": "# Remove a group from a host group\n\n***DELETE*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/hostgroupname/user_members/groupname/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X DELETE {{PROTOCOL}}://{{HOST_NAME}}/v1/hostgroups/{{HOST_GROUP}}/group_members/{{GROUP}}/\n```\n\n## PATH PARAMS\n* hostgroupname (*string, mandatory*)\n* groupname (*string, mandatory*)"
+					},
+					"response": []
+				}
+			],
+			"description": "Postman Collection for REST API Calls for Host Groups"
+		},
+		{
+			"name": "SSH Keys",
+			"item": [
+				{
+					"name": "Allows a user to get their own SSH keys",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "email",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "password",
+									"type": "string"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/my/sshkeys/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"my",
+								"sshkeys",
+								""
+							]
+						},
+						"description": "# Allows a user to get their own SSH keys\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/my/sshkeys/`\n\n```json\ncurl -u 'email:password' {{PROTOCOL}}://{{HOST_NAME}}/v1/my/sshkeys/\n```\n\n### NOTE\nUsed to check if access should be granted for a user to a resource. At least one value of \"hostname\" or \"aws_instance_id\" should be included. Both are not required."
+					},
+					"response": []
+				},
+				{
+					"name": "Allows a user to add an SSH public key to their own account",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "email",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "password",
+									"type": "string"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"my new key\",\r\n    \"key\": \"ssh-rsa AAAAA....\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/my/sshkeys/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"my",
+								"sshkeys",
+								""
+							]
+						},
+						"description": "# Allows a user to add an SSH public key to their own account\n\n***POST* `{{PROTOCOL}}://{{HOST_NAME}}/v1/my/sshkeys/`\n\n```json\ncurl -u 'email:password' -X POST -d '{\"name\": \"my new key\", \"key\": \"ssh-rsa AAAAA....\"}' {{PROTOCOL}}://{{HOST_NAME}}/v1/my/sshkeys/\n```\n\n## BODY PARAMS\n* name (*string, mandatory*)\n* key (*string, mandatory*)\n* key_type *string*"
+					},
+					"response": []
+				}
+			],
+			"description": "Postman Collection for REST API Calls for SSH Keys"
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Checks a username and password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{USER}}\",\r\n    \"password\": \"{{USER_PASSWORD}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/authn/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"authn",
+								""
+							]
+						},
+						"description": "# Checks a username and password\n\n***POST*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/authn/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X POST -d '{\"username\": \"{{USER}}\", \"password\": \"{{USER_PASSWORD}}\"}' {{PROTOCOL}}://{{HOST_NAME}}/v1/authn/\n```\n\n## BODY PARAMS\n* username (*string, mandatory*)\n* password (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Check user access for a resource",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{USER}}\",\r\n    \"resource\": [\r\n        {\r\n            \"hostname\": \"{{HOST_GROUP}}\",\r\n            \"aws_instance_id\": \"i-XXXXXXXXX\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/authz/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"authz",
+								""
+							]
+						},
+						"description": "# Check user access for a resource\n\n***POST*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/authz/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X POST -d '{\"username\": \"{{USER}}\", \"resource\": {\"hostname\": \"{{HOST_GROUP}}\", \"aws_instance_id\": \"i-XXXXXXXXX\"}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/authz/\n```\n\n## BODY PARAMS\n* username (*string, mandatory*)\n* resource (*object, mandatory*)\n  * provider *string*\n  * hostname *string*\n  * aws_instance_id *string*\n  * aws_region_id *string*\n  * gce_instance_id *string*\n  * gce_zone *string*\n  * gce_project_id *string*\n  * gce_networks *array of strings*\n  * gce_networks_tags *array of strings*"
+					},
+					"response": []
+				}
+			],
+			"description": "Postman Collection for REST API Calls for Authentication"
+		},
+		{
+			"name": "Logs",
+			"item": [
+				{
+					"name": "Get LDAP logs",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"from\": \"2016-02-08T02:30Z\",\r\n    \"to\": \"2016-02-09T22:00Z\",\r\n    \"ascending\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/logs/ldap/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"logs",
+								"ldap",
+								""
+							]
+						},
+						"description": "# Get LDAP logs\n\n***POST*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/logs/ldap/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}'  {{PROTOCOL}}://{{HOST_NAME}}/v1/logs/ldap/ -d '{\"from\": \"2016-02-08T02:30Z\", \"to\": \"2016-02-09T22:00Z\", \"ascending\": true}'\n```\n\n## BODY PARAMS\n* from (*date, mandatory*)\n* to (*date, mandatory*)\n* omit-success *boolean*\n* omit-fail *boolean*\n* ascending *boolean*\n* page *int32*\n\n### NOTE\nReturns up to 100 logs at a time. Downloading logs via the API is only available to customers who have subscribed to extended logging access"
+					},
+					"response": []
+				},
+				{
+					"name": "Get RADIUS logs",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"from\": \"2016-02-08T02:30Z\",\r\n    \"to\": \"2016-02-09T22:00Z\",\r\n    \"ascending\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/logs/radius/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"logs",
+								"radius",
+								""
+							]
+						},
+						"description": "# Get RADIUS logs\n\n***POST*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/logs/radius/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}'  {{PROTOCOL}}://{{HOST_NAME}}/v1/logs/radius/ -d '{\"from\": \"2016-02-08T02:30Z\", \"to\": \"2016-02-09T22:00Z\", \"ascending\": true}'\n```\n\n## BODY PARAMS\n* from (*date, mandatory*)\n* to (*date, mandatory*)\n* omit-success *boolean*\n* omit-fail *boolean*\n* ascending *boolean*\n* page *int32*\n\n### NOTE\nReturns up to 100 logs at a time. Downloading logs via the API is only available to customers who have subscribed to extended logging access"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Event logs",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"from\": \"2019-05-15T02:30Z\",\r\n    \"to\": \"2019-05-16T22:00Z\",\r\n    \"event_type\": \"user.set_admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/logs/event/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"logs",
+								"event",
+								""
+							]
+						},
+						"description": "# Get Event logs\n\n***POST*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/logs/event/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}'  {{PROTOCOL}}://{{HOST_NAME}}/v1/logs/event/ -d '{\"from\": \"2019-05-15T02:30Z\", \"to\": \"2019-05-16T22:00Z\", \"event_type\": \"user.set_admin\"}'\n```\n\n## BODY PARAMS\n* from (*date, mandatory*)\n* to (*date, mandatory*)\n* event_type *string*\n* ascending *boolean*\n* page *int32*\n\n### NOTE\nReturns up to 100 logs at a time. Downloading logs via the API is only available to customers who have subscribed to extended logging access"
+					},
+					"response": []
+				}
+			],
+			"description": "Postman Collection for REST API Calls for Logs"
+		},
+		{
+			"name": "Allowed IPs",
+			"item": [
+				{
+					"name": "Get list of all whitelist IP entries",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/whitelist_ips/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"whitelist_ips",
+								""
+							]
+						},
+						"description": "# Get list of all whitelist IP entries\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/whitelist_ips/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/whitelist_ips/\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new allowed IP entry",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"{{HOST_GROUP}}\",\r\n    \"ip_address\": \"127.0.0.2\",\r\n    \"end_ip_address\": \"127.0.0.3\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/whitelist_ips/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"whitelist_ips",
+								""
+							]
+						},
+						"description": "# Create a new allowed IP entry\n\n***POST*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/whitelist_ips/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X POST -d '{\"name\": \"{{HOST_GROUP}}\", \"ip_address\": \"127.0.0.2\", \"end_ip_address\": \"127.0.0.3\"}' {{PROTOCOL}}://{{HOST_NAME}}/v1/whitelist_ips/\n```\n\n## BODY PARAMS\n* name (*string, mandatory*)\n* ip_address (*string, mandatory*)\n* end_ip_address *string*"
+					},
+					"response": []
+				},
+				{
+					"name": "Get info for a allowed IP entry",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/whitelist_ips/{{WHITELIST_IP}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"whitelist_ips",
+								"{{WHITELIST_IP}}",
+								""
+							]
+						},
+						"description": "# Get info for a allowed IP entry\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/whitelist_ips/allowed_ip/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/whitelist_ips/{{WHITELIST_IP}}/\n```\n\n## PATH PARAMS\n* allowed_ip (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Enable or disable a whitelist IP entry",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"enabled\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/whitelist_ips/{{WHITELIST_IP}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"whitelist_ips",
+								"{{WHITELIST_IP}}",
+								""
+							]
+						},
+						"description": "# Enable or disable a whitelist IP entry\n\n***PUT*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/whitelist_ips/allowed_ip/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}'  -X PUT -d '{\"enabled\": false}' {{PROTOCOL}}://{{HOST_NAME}}/v1/whitelist_ips/{{WHITELIST_IP}}/\n```\n\n## PATH PARAMS\n* allowed_ips (*string, mandatory*)\n\n## QUERY PARAMS\n* enabled *boolean*"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a whitelist IP entry",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/whitelist_ips/{{WHITELIST_IP}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"whitelist_ips",
+								"{{WHITELIST_IP}}",
+								""
+							]
+						},
+						"description": "# Delete a whitelist IP entry\n\n***DELETE*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/whitelist_ips/allowed_ip/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}'  -X DELETE {{PROTOCOL}}://{{HOST_NAME}}/v1/whitelist_ips/{{WHITELIST_IP}}/\n```\n\n## PATH PARAMS\n* allowed_ip (*string, mandatory*)"
+					},
+					"response": []
+				}
+			],
+			"description": "# Postman Collection for REST API Calls for Allowed IPs"
+		},
+		{
+			"name": "MAC Addresses",
+			"item": [
+				{
+					"name": "Get list of all MAC entries",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"mac_entries",
+								""
+							]
+						},
+						"description": "# Get list of all MAC entries\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new MAC entry",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"{{MAC_ENTRY}}\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"mac_entries",
+								""
+							]
+						},
+						"description": "# Get list of all MAC entries\n\n***POST*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X POST -d '{\"name\": \"{{MAC_ENTRY}}\"}' {{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/\n```\n\n## BODY PARAMS\n* name (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Check to see whether a given MAC entry exists",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/{{MAC_ENTRY}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"mac_entries",
+								"{{MAC_ENTRY}}",
+								""
+							]
+						},
+						"description": "# Check to see whether a given MAC entry exists\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/entryname/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/{{MAC_ENTRY}}/\n```\n\n## PATH PARAMS\n* entryname (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a single MAC entry",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/{{MAC_ENTRY}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"mac_entries",
+								"{{MAC_ENTRY}}",
+								""
+							]
+						},
+						"description": "# Delete a single MAC entry\n\n***DELETE*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/entryname/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X DELETE {{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/{{MAC_ENTRY}}/\n```\n\n##PATH PARAMS\n* entryname (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single MAC entry",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/{{MAC_ENTRY}}/prefixes/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"mac_entries",
+								"{{MAC_ENTRY}}",
+								"prefixes",
+								""
+							]
+						},
+						"description": "# GET a single MAC entry\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/entryname/prefixes/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/{{MAC_ENTRY}}/prefixes/\n```\n\n##PATH PARAMS\n* entryname (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Add a prefix to a MAC entry",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"prefix\": \"bb:cc:dd\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/{{MAC_ENTRY}}/prefixes/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"mac_entries",
+								"{{MAC_ENTRY}}",
+								"prefixes",
+								""
+							]
+						},
+						"description": "# Add a prefix to a MAC entry\n\n***PUT*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/entryname/prefixes/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X PUT -d '{\"prefix\": \"bb:cc:dd\"}' {{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/{{MAC_ENTRY}}/prefixes/\n```\n\n## PATH PARAMS\n* entryname (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Check to see if a prefix exists in a given MAC entry",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/{{MAC_ENTRY}}/prefixes/aa:bb/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"mac_entries",
+								"{{MAC_ENTRY}}",
+								"prefixes",
+								"aa:bb",
+								""
+							]
+						},
+						"description": "# Check to see if a prefix exists in a given MAC entry\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/entryname/prefixes/prefix/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/{{MAC_ENTRY}}/prefixes/aa:bb/\n```\n\n## PATH PARAMS\n* entryname (*string, mandatory*)\n* prefix (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Deletes a prefix for a given MAC entry",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/{{MAC_ENTRY}}/prefixes/aa:bb/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"mac_entries",
+								"{{MAC_ENTRY}}",
+								"prefixes",
+								"aa:bb",
+								""
+							]
+						},
+						"description": "# Deletes a prefix for a given MAC entry\n\n***DELETE*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/entryname/prefixes/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/mac_entries/{{MAC_ENTRY}}/prefixes/```\n\n## PATH PARAMS\n\n* entryname (*string, mandatory*)\n* prefix (*string, mandatory*)\n  * the MAC address prefix"
+					},
+					"response": []
+				}
+			],
+			"description": "# Postman Collection for REST API Calls for MAC addresses"
+		},
+		{
+			"name": "SUDOers",
+			"item": [
+				{
+					"name": "Get SUDOer entries",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"sudoers",
+								""
+							]
+						},
+						"description": "# Get SUDOer entries\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/\n```\n\n## NOTE:\nTo enable this feature, contact us t help@foxpass.com"
+					},
+					"response": []
+				},
+				{
+					"name": "Get a SUDOer entry",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/{{SUDOER_NAME}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"sudoers",
+								"{{SUDOER_NAME}}",
+								""
+							]
+						},
+						"description": "# Get a SUDOer entry\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/entryname/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/{{SUDOER_NAME}}/\n```\n\n## PATH PARAMS\n* entryname (*string, mandatory*)\n\n## NOTE:\nTo enable this feature, contact us at help@foxpass.com"
+					},
+					"response": []
+				},
+				{
+					"name": "Get users for a SUDOer entry",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/{{SUDOER_NAME}}/users/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"sudoers",
+								"{{SUDOER_NAME}}",
+								"users",
+								""
+							]
+						},
+						"description": "# Get users for a SUDOer entry\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/entryname/users/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/{{SUDOER_NAME}}/users/\n```\n\n## PATH PARAMS\n* entryname (*string, mandatory*)\n\n### NOTE:  SUDOers is an add-on feature\nTo enable this feature, contact us at help@foxpass.com"
+					},
+					"response": []
+				},
+				{
+					"name": "Add a user to a SUDOer entry",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{SUDOER_NAME}}\",\r\n    \"enabled\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/{{SUDOER_NAME}}/users/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"sudoers",
+								"{{SUDOER_NAME}}",
+								"users",
+								""
+							]
+						},
+						"description": "# Add a user to a SUDOer entry\n\n***POST*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/entryname/users/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X POST -d '{\"username\": \"{{SUDOER_NAME}}\", \"enabled\": true}'  {{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/{{SUDOER_NAME}}/users/\n```\n\n## PATH PARAMS\n* entryname (*string, mandatory*)\n\n## BODY PARAMS\n* username (*string, mandatory*)\n* enabled *boolean*\n  * the enabled status of the user\n\n### NOTE: SUDOers is an add-on feature\nTo enable this feature, contact us at help@foxpass.com"
+					},
+					"response": []
+				},
+				{
+					"name": "Get the groups for a SUDOer entry",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/{{SUDOER_NAME}}/groups/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"sudoers",
+								"{{SUDOER_NAME}}",
+								"groups",
+								""
+							]
+						},
+						"description": "# Get the groups for a SUDOer entry\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/entryname/groups/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/{{SUDOER_NAME}}/groups/\n```\n\n## PATH PARAMS\n* entryname (*string, mandatory*)\n\n### NOTE: SUDOers is an add-on feature\nTo enable this feature, contact us at help@foxpass.com"
+					},
+					"response": []
+				},
+				{
+					"name": "Add a group to a SUDOer entry",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"groupname\": \"Admins\",\r\n    \"enabled\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/{{SUDOER_NAME}}/groups/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"sudoers",
+								"{{SUDOER_NAME}}",
+								"groups",
+								""
+							]
+						},
+						"description": "# Add a group to a SUDOer entry\n\n***POST*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/entryname/groups/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X POST -d '{\"groupname\": \"Admins\", \"enabled\": true}'  {{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/{{SUDOER_NAME}}/groups/\n```\n\n## PATH PARAMS\n* entryname (*string, mandatory*)\n\n## BODY PARAMS\n* groupname (*string, mandatory*)\n* enabled *boolean*\n   * the enabled status of the group\n\n### Note: SUDOers is an add-on feature\nTo enable this feature, contact us at help@foxpass.com"
+					},
+					"response": []
+				},
+				{
+					"name": "Check if a user is in a SUDOer entry",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/{{SUDOER_NAME}}/users/{{USER}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"sudoers",
+								"{{SUDOER_NAME}}",
+								"users",
+								"{{USER}}",
+								""
+							]
+						},
+						"description": "# Check if a user is in a SUDOer entry\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/entryname/users/username/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/{{SUDOER_NAME}}/users/{{USER}}/\n```\n\n## PATH PARAMS\n* entryname (*string, mandatory*)\n* username (*string, mandatory*)\n\n### Note: SUDOers is an add-on feature\nTo enable this feature, contact us at help@foxpass.com"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a user from a SUDOer entry",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/{{SUDOER_NAME}}/users/{{USER}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"sudoers",
+								"{{SUDOER_NAME}}",
+								"users",
+								"{{USER}}",
+								""
+							]
+						},
+						"description": "# Remove a user from a SUDOer entry\n\n***DELETE*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/entryname/users/username/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X DELETE {{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/{{SUDOER_NAME}}/users/{{USER}}/\n```\n\n## PATH PARAMS\n* entryname (*string, mandatory*)\n* username (*string, mandatory*)\n\n### Note: SUDOers is an add-on feature\nTo enable this feature, contact us at help@foxpass.com"
+					},
+					"response": []
+				},
+				{
+					"name": "Check if a group is in a SUDOer entry",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/{{SUDOER_NAME}}/groups/{{GROUP}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"sudoers",
+								"{{SUDOER_NAME}}",
+								"groups",
+								"{{GROUP}}",
+								""
+							]
+						},
+						"description": "# Check if a group is in a SUDOer entry\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/entryname/groups/groupname/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/{{SUDOER_NAME}}/groups/{{GROUP}}/\n```\n\n## PATH PARAMS\n* entryname (*string, mandatory*)\n* groupname (*string, mandatory*)\n\n### Note: SUDOers is an add-on feature\nTo enable this feature, contact us at help@foxpass.com"
+					},
+					"response": []
+				},
+				{
+					"name": "Check if a group is in a SUDOer entry",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/{{SUDOER_NAME}}/groups/{{GROUP}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"sudoers",
+								"{{SUDOER_NAME}}",
+								"groups",
+								"{{GROUP}}",
+								""
+							]
+						},
+						"description": "# Check if a group is in a SUDOer entry\n\n***DELETE*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/entryname/groups/groupname/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X DELETE {{PROTOCOL}}://{{HOST_NAME}}/v1/sudoers/{{SUDOER_NAME}}/groups/{{GROUP}}/\n```\n\n## PATH PARAMS\n* entryname (*string, mandatory*)\n* groupname (*string, mandatory*)\n\n### Note: SUDOers is an add-on feature\nTo enable this feature, contact us at help@foxpass.com"
+					},
+					"response": []
+				}
+			],
+			"description": "# Postman Collection for REST API Calls for SUDOers"
+		},
+		{
+			"name": "LDAP Binders",
+			"item": [
+				{
+					"name": "Get list of all LDAP binders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/ldapbinders/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"ldapbinders",
+								""
+							]
+						},
+						"description": "# Get list of all LDAP binders\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/ldapbinders/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/ldapbinders/\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Add an LDAP binder",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"{{LDAP_BINDER}}\",\r\n    \"password\": \"{{LDAP_BINDER_PASSWORD}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/ldapbinders/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"ldapbinders",
+								""
+							]
+						},
+						"description": "# Add an LDAP binder\n\n***POST*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/ldapbinders/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X POST -d '{\"name\": \"{{LDAP_BINDER}}\", \"password\": \"{{LDAP_BINDER_PASSWORD}}\"}' {{PROTOCOL}}://{{HOST_NAME}}/v1/ldapbinders/\n```\n\n## QUERY PARAMS\n* name (*string, mandatory*)\n* password *string*\n  * *Set a password manually instead of having Foxpass automatically generate one*"
+					},
+					"response": []
+				},
+				{
+					"name": "Get info for an LDAP binder",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/ldapbinders/{{LDAP_BINDER}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"ldapbinders",
+								"{{LDAP_BINDER}}",
+								""
+							]
+						},
+						"description": "# Get info for an LDAP binder\n\n***GET*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/ldapbinders/ldapbindername/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' {{PROTOCOL}}://{{HOST_NAME}}/v1/ldapbinders/{{LDAP_BINDER}}/\n```\n\n## PATH PARAMS\n* ldapbinders (*string, mandatory*)"
+					},
+					"response": []
+				},
+				{
+					"name": "Set info for an LDAP binder",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"reset_password\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/ldapbinders/{{LDAP_BINDER}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"ldapbinders",
+								"{{LDAP_BINDER}}",
+								""
+							]
+						},
+						"description": "# Set info for an LDAP binder\n\n***PUT*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/ldapbinders/ldapbindername/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X PUT -d '{\"reset_password\": true}' {{PROTOCOL}}://{{HOST_NAME}}/v1/ldapbinders/{{LDAP_BINDER}}/\n```\n\n## PATH PARAMS\n* ldapbindername (*string, mandatory*)\n\n## BODY PARAMS\n* reset_password *boolean*\n* password *string*"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete an LDAP binder",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN_API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROTOCOL}}://{{HOST_NAME}}/v1/ldapbinders/{{LDAP_BINDER}}/",
+							"protocol": "{{PROTOCOL}}",
+							"host": [
+								"{{HOST_NAME}}"
+							],
+							"path": [
+								"v1",
+								"ldapbinders",
+								"{{LDAP_BINDER}}",
+								""
+							]
+						},
+						"description": "# Delete an LDAP binder\n\n***DELETE*** `{{PROTOCOL}}://{{HOST_NAME}}/v1/ldapbinders/:ldapbindername/`\n\n```json\ncurl -H 'Authorization: {{TOKEN_API_KEY}}' -X DELETE {{PROTOCOL}}://{{HOST_NAME}}/v1/ldapbinders/vpn/\n```\n\n## PATH PARAMS\n* ldapbinders (*string, mandatory*)"
+					},
+					"response": []
+				}
+			],
+			"description": "# Postman Collection for REST API Calls for LDAP Binders"
+		}
+	]
+}
