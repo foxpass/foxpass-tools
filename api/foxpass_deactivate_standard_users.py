@@ -27,7 +27,7 @@ def main():
     for user in data:
         if user['is_active'] and not user['is_eng_user'] and not user['is_posix_user']:
             print(user['username'])
-            requests.put(args.api_url + 'users/' + user['username'] + '/', headers=header, json={'is_active': False})
+            requests.put(args.api_url + ENDPOINT + user['username'] + '/', headers=header, json={'is_active': False})
 
 
 if __name__ == '__main__':
