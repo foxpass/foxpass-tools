@@ -38,11 +38,11 @@ def send_api_request(method, endpoint, data={}):
     if r.status_code == 200 and 'reason' not in r.json():
         return True
     else:
-        log("Error - {}".format(r.json()['reason']))
+        log("Error - {}".format(r.json()))
 
 
 def main():
-    global api_hostname, api_key, faker_keys
+    global api_hostname, api_key
     args = get_args()
     api_hostname = args.api_hostname
     api_key = args.api_key
@@ -51,7 +51,7 @@ def main():
 
     # check if user custom fields have been added
     if args.custom_fields and len(args.custom_fields) > 0:
-        val = input("Please added these custom user fields {} in Foxpass console {} (bottom of the page). \nType OK when ready: ".format(args.custom_fields, CONSOLE_PAGE_URL))
+        val = input("Please add these custom user fields {} in Foxpass console {} (bottom of the page). \nType OK when ready: ".format(args.custom_fields, CONSOLE_PAGE_URL))
         if not val or val.lower() != 'ok':
             exit('Please add custom fields to Foxpass console and retry.')
     # create groups, users and custom fields now
