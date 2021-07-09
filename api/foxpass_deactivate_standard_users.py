@@ -25,7 +25,7 @@ def main():
 
     data = r.json()['data']
     for user in data:
-        if user['is_active'] and not user['is_eng_user'] and not user['is_posix_user']:
+        if user['is_active'] and not user['is_eng_user'] and not user['is_posix_user'] and not user['is_company_admin'] and not user['is_service_account']:
             print(user['username'])
             requests.put(args.api_url + ENDPOINT + user['username'] + '/', headers=header, json={'is_active': False})
 
