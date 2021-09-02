@@ -72,6 +72,7 @@ def build_query(username=None, outcome=None, location=None):
     if outcome != None:
         query_string += f"log['success']=={outcome}"
     if query_string != "":
+	# If the string ends with "and", remove it before returning.
         if query_string[-2] == 'd':
             query_string = query_string[:-5]
     return query_string
