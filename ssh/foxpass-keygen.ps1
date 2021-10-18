@@ -49,6 +49,7 @@ function Main() {
 
 PS .\foxpass-keygen.ps1
 Email: bryan@foxpass.com
+Mfacode: 000000
 Password: : **********
 
 Generating SSH key...
@@ -64,6 +65,7 @@ ok
   .\foxpass-keygen.ps1 -Email bryan@foxpass.com
 
 PS .\foxpass-keygen.ps1 -Email bryan@foxpass.com
+Mfacode: 000000
 Password: : **********
 
 Generating SSH key...
