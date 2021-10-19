@@ -49,6 +49,7 @@ function Main() {
 
 PS .\foxpass-keygen.ps1
 Email: bryan@foxpass.com
+Mfacode: 000000
 Password: : **********
 
 Generating SSH key...
@@ -64,6 +65,7 @@ ok
   .\foxpass-keygen.ps1 -Email bryan@foxpass.com
 
 PS .\foxpass-keygen.ps1 -Email bryan@foxpass.com
+Mfacode: 000000
 Password: : **********
 
 Generating SSH key...
@@ -94,12 +96,13 @@ ok
   param (
     [string]$ApiUrl,
     [Parameter(Mandatory = $true)][string]$Email,
+    [Parameter(Mandatory = $true)][string]$Mfacode,
     [SecureString]$Password = $( Read-Host -AsSecureString "Password: " )
   )
 
   Request-API $ApiUrl $Email $Password '/v1/my/sshkeys/'
   $Filename = Add-SSHKey $Email
-  Add-SSHKeyFoxpass $ApiUrl $Email $Password $Filename 'v1/my/sshkeys/'
+  Add-SSHKeyFoxpass $ApiUrl $Email $Password $Mfacode $Filename 'v1/my/sshkeys/'
 }
 
 # Generate an SSH key and store it in the current user's $Home/.ssh directory
@@ -126,6 +129,7 @@ function Add-SSHKeyFoxpass() {
     [string]$ApiUrl,
     [string]$Email,
     [SecureString]$Password,
+    [string]$Mfacode,
     [string]$Filename,
     [string]$Path
   )
@@ -137,6 +141,7 @@ function Add-SSHKeyFoxpass() {
   $File = Split-Path "$Filename.pub" -leaf
 
   $PostParams = @{
+    mfa_code = $Mfacode;
     name = $File;
     key  = $RawContents;
   };
