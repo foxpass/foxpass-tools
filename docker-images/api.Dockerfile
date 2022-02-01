@@ -10,4 +10,3 @@ COPY api/* ./
 COPY docker-images/api.sh ./
 
 ENTRYPOINT ["./api.sh"]
-docker pull python:
