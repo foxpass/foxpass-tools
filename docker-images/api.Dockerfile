@@ -1,4 +1,4 @@
-FROM python:3.8.12-alpine3.14
+FROM python:3.9.10-alpine3.15
 RUN mkdir -p /src/api
 WORKDIR /src/api
 
