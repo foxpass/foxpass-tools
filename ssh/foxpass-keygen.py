@@ -46,14 +46,16 @@ def main():
 
     email = input('Email address: ')
     password = getpass.getpass()
-    mfa_code = input('Foxpass MFA code:')
+    mfa_code = input('Foxpass MFA code: ')
 
     try:
         add_key_to_foxpass(api_base, email, password, mfa_code, filename)
         print('')
-        print('Don\'t forget to run ssh-add now. The -K adds the key to your keychain so it is loaded on boot:')
+        print('Don\'t forget to run ssh-add now. The -K (macOS Big Sur or prior) OR --apple-use-keychain flag (macOS Monterey and later) adds the key to your keychain so it is loaded on boot:')
         print('')
         print('ssh-add -K {}'.format(filename))
+        print('OR')
+        print('ssh-add --apple-use-keychain {}'.format(filename))
         print('')
     except Exception as e:
         print('Exception: {}'.format(e))
