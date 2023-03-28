@@ -1,19 +1,17 @@
 #!/usr/local/bin/python3
 
 """
-This script pulls LDAP logs from your Foxpass instance and allows you to parse them by date, user, or success outcome. 
-Logs can be printed (in pretty colors) or exported in CSV format. 
+This script pulls Event logs from your Foxpass instance.
 
 Required packages:
 pip install requests
 
 To run:
-python3 foxpass_ldap_logs.py
+python3 foxpass_event_logs.py
 
-By default the script will print color-coded LDAP logs from the last (7) days. You can use the optional arguments below:
+By default the script will print color-coded logs from the last (7) days. You can use the optional arguments below:
 
---bind_dn - Filter by binder dn name
---type - Filter by ldap binder type.
+--event_type - Filter by event type.
 --hours - How far back to show the logs in Hours.
 --csv - Output the logs to a CSV file, specify the filename and path.
 """
@@ -24,7 +22,7 @@ import argparse
 import csv
 
 ##### EDIT THESE #####
-FOXPASS_API_TOKEN = ""
+FOXPASS_API_TOKEN = "FTA6LcR3Y7xA6cW4qeaIGeDO1YNDK1uD"
 
 # CONSTANTS
 LAST_HOW_MANY_DAYS_LOGS = 7
@@ -33,7 +31,7 @@ LAST_HOW_MANY_DAYS_LOGS = 7
 STARTDATE = (datetime.now(timezone.utc) - timedelta(days=LAST_HOW_MANY_DAYS_LOGS)).strftime('%Y-%m-%dT%H:%MZ')
 ENDDATE = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%MZ')
 
-FOXPASS_URL = "https://api.foxpass.com/v1/logs/ldap/"
+FOXPASS_URL = "https://api.foxpass.com/v1/logs/event/"
 HEADERS = {'Authorization': 'Token ' + FOXPASS_API_TOKEN}
 PAGEREQUEST = requests.post(
     FOXPASS_URL,
@@ -57,20 +55,17 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 def get_args():
-    parser = argparse.ArgumentParser(description='Pull and parse LDAP logs from your Foxpass environment')
-    parser.add_argument('--bind_dn', help='Filter logs by binder dn name')
-    parser.add_argument('--type', help='Filter logs by ldap binder type')
+    parser = argparse.ArgumentParser(description='Pull and parse Event logs from your Foxpass environment')
+    parser.add_argument('--event_type', help='Filter logs by event type')
     parser.add_argument('--hours', type=int, help='How far back to check the logs in hours')
     parser.add_argument('--csv', help='Export a CSV of the log data to the specified filename and path')
     return parser.parse_args()
 
 # Builds an if statement to filter the logs based on user arguments
-def build_query(bind_dn=None, request_type=None):
+def build_query(event_type=None):
     query_string = ""
-    if bind_dn != None:
-        query_string += "log['bindDn']=='{}' and ".format(bind_dn)
-    if request_type != None:
-        query_string += "log['type']=='{}' and ".format(request_type)
+    if event_type != None:
+        query_string += "log['event_type']=='{}' and ".format(event_type)
     if query_string != "":
 	# If the string ends with "and", remove it before returning.
         if query_string[-2] == 'd':
@@ -118,7 +113,7 @@ def lookup_filter(logs, if_statement, csvarg=None, csv_writer=None):
         p += 1
 
 def csv_export(log, csv_writer):
-    csv_writer.writerow([log["timestamp"], log["bindDn"], log["type"], log["success"], log["message"]])
+    csv_writer.writerow([log["timestamp"], log["event_type"], log["data"]])
 
 # Determines start time based on the --hours argument
 def start_time(hours):
@@ -128,10 +123,8 @@ def start_time(hours):
 def print_logs(sourcedict):
     print(
         bcolors.OKCYAN + sourcedict["timestamp"],
-        bcolors.OKGREEN + sourcedict["bindDn"],
-        bcolors.WARNING + sourcedict["type"],
-        bcolors.FAIL + ("True" if sourcedict["success"] == 1 else "False"),
-        bcolors.OKBLUE + sourcedict["message"],
+        bcolors.OKGREEN + sourcedict["event_type"],
+        bcolors.OKBLUE + str(sourcedict["data"]),
     )
 
 def main():
@@ -141,14 +134,14 @@ def main():
     if args.csv != None:
         csv_open = open(args.csv, 'w', newline='')
         csv_writer = csv.writer(csv_open)
-        csv_writer.writerow(["TIMESTAMP (UTC)","BIND_DN","TYPE","SUCCESS","MESSAGE"])
+        csv_writer.writerow(["TIMESTAMP (UTC)","EVENT_TYPE","DATA"])
     else:
         csv_writer = None
 
     if args.hours:
         STARTDATE = start_time(args.hours)
 
-    if_statement = build_query(args.bind_dn, args.type)
+    if_statement = build_query(args.event_type)
 
     logs = get_logs()
 
