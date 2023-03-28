@@ -22,7 +22,7 @@ import argparse
 import csv
 
 ##### EDIT THESE #####
-FOXPASS_API_TOKEN = "FTA6LcR3Y7xA6cW4qeaIGeDO1YNDK1uD"
+FOXPASS_API_TOKEN = ""
 
 # CONSTANTS
 LAST_HOW_MANY_DAYS_LOGS = 7
